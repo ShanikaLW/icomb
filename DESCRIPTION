@@ -1,11 +1,24 @@
 Package: icomb
-Title: What the Package Does (One Line, Title Case)
+Title: Forecasting Hierarchical Time Series Using Information Combination
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    c(person(given = "Shanika", 
+             family = "Wickramasuriya", 
+             email = "shanika.wickramasuriya@monash.edu", 
+             role = c("aut", "cre")),
+      person(given = "Mitchell",
+             family = "O'Hara-Wild",
+             role = "ctb"),
+      person(given = "Nuwani", 
+             family = "Palihawadana", 
+             role = "ctb"),
+      person(given = "Minh",
+             family = "Nguyen",
+             role = "ctb"))
+Description: Provides functions for implementing the Information Combination approach proposed by Nguyen, Vahid and Wickramasuriya (2025).
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Imports: 
+    glmnet
