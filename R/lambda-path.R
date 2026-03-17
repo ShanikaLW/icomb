@@ -1,3 +1,37 @@
+#' Calculate a sequence of penalty parameters
+#'
+#' @param x Input matrix, of dimension nobs x nvars; each row is an observation vector.
+#' `nvars` should be greater than one. In other words `x` should have 2 or more columns.
+#' `x` can be in the sparse matrix format (inherit from class "`sparseMatrix`" as in package `Matrix`).
+#' @param y A matrix of quantitative responses.
+#' @param alpha The elasticnet mixing parameter, with \eqn{0 \leq \alpha \leq 1}. The penalty is defined as
+#' \deqn{(1 - \alpha)/2\|B\|_2^2 + \alpha\|B\|_2}
+#' `alpha = 1` is the group lasso penalty, and `alpha = 0` is the ridge penalty.
+#' @param standardize Logical flag for `x` variable standardization, prior to fitting the model sequence.
+#' The coefficients are always returned on the original scale. Default is `standardize = FALSE`.
+#' @param standardize_response This allows the user to standardize the response variables.
+#' Default is `standardize_response = FALSE`.
+#' @param intercept Should intercepts be fitted (default = TRUE) or set to zero (FALSE).
+#' @param lambda_min_ratio The smallest value for `lambda`, as a fraction of `lambda_max`
+#' (the data derived value for which all coefficients are zero). `lambda_min_ratio = "expand"` (default) sets the ratio as
+#' \eqn{10^{-\lfloor \log_{10}(\lambda_{max})\rfloor-2}} whereas `lambda_min_ratio = "glmnet"` sets the ratio to the value used in the `glmnet` package.
+#' If `nobs < nvars`, the default is `0.01`, otherwise `1e-04`.
+#' @param nlambda The number of lambda values. Default is 100.
+#'
+#' @returns A sequence of penalty parameters
+#' @export
+#'
+#' @examples
+#' set.seed(2024)
+#' n <- 100
+#' p <- 50
+#' k <- 2
+
+#' x <- matrix(rnorm(n * p), ncol = p)
+#' y <- matrix(rnorm(n * k), ncol = k)
+#' glmnet::glmnet(x, y, family = "mgaussian", standardize = FALSE,
+#'                standardize.response = FALSE, intercept = TRUE)$lambda
+#' lambda_path(x, y, lambda_min_ratio = "glmnet")
 lambda_path <- function(x, y, alpha = 1, standardize = FALSE,
                         standardize_response = FALSE,
                         intercept = TRUE,
