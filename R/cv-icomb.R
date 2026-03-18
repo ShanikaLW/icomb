@@ -25,8 +25,7 @@
 #' The functions in the `glmnet` package are designed for efficiency by computing the entire regularization path
 #' (a sequence of lambda values) using "warm starts", which is often faster than computing a single fit. The default is `TRUE`.
 #' @importFrom glmnet glmnet
-#' @importFrom future.apply future_lapply
-#' @importFrom abind abind
+#' @importFrom future.apply future_sapply
 #' @importFrom stats coef predict
 #'
 #' @returns A list containing
@@ -96,7 +95,7 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
   test <- actual[(train_size + 1):nobs, ]
   ysd_all <- array(, dim = c(niter, dimy[2]))
 
-  recon_list <- future_lapply(1:niter, function(i) {
+  recon_list <- future_sapply(1:niter, function(i) {
     train_set <- 1:(train_size + i - 1)
     xdata <- fitted[train_set, ]
     ydata <- actual[train_set, ]
@@ -118,7 +117,7 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
                   standardize.response = standardize_response, intercept = intercept, alpha = alpha, lambda = lambda, maxit = maxit)
     predict(fit, newx = fitted[train_size + i, !xconst_var, drop = FALSE])
   }, future.seed = TRUE)
-  recon <- abind(recon_list, along = 1)
+  recon <- array(t(recon_list), dim = c(niter, dimy[2], length(lambda)))
   err <- sweep(recon, 1:2, test)
 
   mse <- colMeans(colMeans(err^2))
