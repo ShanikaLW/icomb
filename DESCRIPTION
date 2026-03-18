@@ -21,9 +21,15 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: 
-    abind,
+    distributional,
+    dplyr,
+    fabletools,
     future.apply,
-    glmnet
+    generics,
+    glmnet,
+    purrr,
+    tsibble
 Suggests: 
     forecast,
+    future,
     hts
