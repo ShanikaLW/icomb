@@ -57,34 +57,34 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
                       nlambda = 100, maxit = 1e+07, exact = TRUE) {
   dimx <- dim(fitted)
   if (is.null(dimx) | (dimx[2] <= 1))
-    stop("fitted should be a matrix with 2 or more columns")
+    cli::cli_abort("{.var fitted} should be a matrix with 2 or more columns")
   if (any(is.na(fitted)))
-    stop("fitted has missing values")
+    cli::cli_abort("{.var fitted} has missing values")
   nobs <- dimx[1]
   nvars <- dimx[2]
 
   dimy <- dim(actual)
   if (is.null(dimy) | (dimy[2] <= 1))
-    stop("actual should be a matrix with 2 or more columns")
+    cli::cli_abort("{.var actual} should be a matrix with 2 or more columns")
   if (any(is.na(actual)))
-    stop("actual has missing values")
+    cli::cli_abort("{.var actual} has missing values")
 
   if (dimy[1] != dimx[1])
-    stop("number of observations in actual and fitted does not match")
+    cli::cli_abort("number of observations in {.var actual} and {.var fitted} does not match")
 
   if (train_size > dimx[1])
-    stop("number of training observations should be less than that for actual/fitted")
+    cli::cli_abort("number of training observations should be less than that for actual/fitted")
 
   if (lambda_min_ratio >= 1 & is.numeric(lambda_min_ratio))
-    stop("lambda_min_ratio should be less than 1")
+    cli::cli_abort("lambda_min_ratio should be less than 1")
 
   if (alpha > 1) {
-    warning("alpha > 1; set to 1")
+    cli::cli_warn("{.var alpha} > 1; set to 1")
     alpha <- 1
   }
 
   if (alpha < 0) {
-    warning("alpha < 0; set to 0")
+    cli::cli_warn("{.var alpha} < 0; set to 0")
     alpha <- 0
   }
 
@@ -107,7 +107,7 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
     yconst_var <- ysd < sqrt(.Machine$double.eps) # constant responses
 
     if (any(yconst_var)) {
-      warning("There are constant responses.")
+      cli::cli_warn("There are constant responses.")
 
       if (standardize_response)
         ydata <- ydata[, !yconst_var]
@@ -136,7 +136,7 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
   yconst_var <- ysd < sqrt(.Machine$double.eps) # constant responses
 
   if (any(yconst_var)) {
-    warning("There are constant responses.")
+    cli::cli_warn("There are constant responses.")
 
     if (standardize_response)
       actual <- actual[, !yconst_var]

@@ -39,29 +39,29 @@ lambda_path <- function(x, y, alpha = 1, standardize = FALSE,
                         nlambda = 100) {
   dimx <- dim(x)
   if (is.null(dimx) | (dimx[2] <= 1))
-    stop("x should be a matrix with 2 or more columns")
+    cli::cli_abort("{.var x} should be a matrix with 2 or more columns")
   if (any(is.na(x)))
-    stop("x has missing values")
+    cli::cli_abort("{.var x} has missing values")
   nobs <- dimx[1]
   nvars <- dimx[2]
 
   dimy <- dim(y)
   if (is.null(dimy) | (dimy[2] <= 1))
-    stop("y should be a matrix with 2 or more columns")
+    cli::cli_abort("{.var y} should be a matrix with 2 or more columns")
   if (any(is.na(y)))
-    stop("y has missing values")
+    cli::cli_abort("{.var y} has missing values")
   if (dimy[1] != dimx[1])
-    stop("number of observations in actual and fitted does not match")
+    cli::cli_abort("number of observations in {.var actual} and {.var fitted} does not match")
 
   if (lambda_min_ratio >= 1 & is.numeric(lambda_min_ratio))
-    stop("lambda_min_ratio should be less than 1")
+    cli::cli_abort("{.var lambda_min_ratio} should be less than 1")
 
   if (alpha > 1) {
-    warning("alpha > 1; set to 1")
+    cli::cli_warn("{.var alpha} > 1; set to 1")
     alpha <- 1
   }
   if (alpha < 0) {
-    warning("alpha < 0; set to 0")
+    cli::cli_abort("{.var alpha} < 0; set to 0")
     alpha <- 0
   }
 
@@ -83,7 +83,7 @@ lambda_path <- function(x, y, alpha = 1, standardize = FALSE,
 
   if (standardize_response) {
     if (length(which(yconst_var)) == dimy[2])
-      stop("All used responses have zero variance")
+      cli::cli_abort("All used responses have zero variance")
     y <- y[, !yconst_var]
   }
 
@@ -94,7 +94,7 @@ lambda_path <- function(x, y, alpha = 1, standardize = FALSE,
     xsd <- rep(1, times = nvars)
 
   if (length(which(xconst_var)) == nvars)
-    stop("All used predictors have zero variance")
+    cli::cli_abort("All used predictors have zero variance")
 
   x <- scale(x, center = xm, scale = xsd)
   x <- x[, !xconst_var]

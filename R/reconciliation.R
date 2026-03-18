@@ -77,7 +77,7 @@ calc <- function(f, ...){
 reconcile_icomb_list <- function (fc, object, point_forecast)
 {
   if (length(unique(map(fc, interval))) > 1) {
-    stop("Reconciliation of temporal hierarchies is not yet supported.")
+    cli::cli_abort("Reconciliation of temporal hierarchies is not yet supported.")
   }
   fc_dist <- map(fc, function(x) x[[distribution_var(x)]])
   fc_mean <- as.matrix(exec(cbind, !!!map(fc_dist, mean)))
