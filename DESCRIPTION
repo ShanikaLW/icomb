@@ -33,4 +33,5 @@ Imports:
 Suggests: 
     forecast,
     future,
+    ggtime,
     hts
