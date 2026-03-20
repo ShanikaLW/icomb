@@ -1,5 +1,10 @@
 #' Information combination reconciliation
 #'
+#' Implements the Information Combination (IComb) method for forecast reconciliation,
+#' combining information from multiple base forecasts through a regression-based framework
+#' that can be estimated using penalized regression techniques. The penalty parameter is estimated
+#' using the rolling forecast origin cross-validation.
+#'
 #' @param models A column of models in a mable.
 #' @param train_size  The size of the initial training window.
 #' @param alpha The elasticnet mixing parameter, with \eqn{0 \leq \alpha \leq 1}. The penalty is defined as
@@ -29,7 +34,45 @@
 #' @importFrom fabletools response distribution_var
 #'
 #' @returns A 'global' model which is icomb coherent
+#' @author Shanika L Wickramasuriya
+#' @references Nguyen, M., Vahid, F., & Wickramasuriya, S. L. (2025).
+#' Hierarchical Forecasting: The Role of Information Combination (Working Paper No. 11/25).
+#' Department of Econometrics and Business Statistics, Monash University.
+#' URL: \url{https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf}
 #' @export
+#'
+#' @examples
+#' library(fable)
+#' library(fabletools)
+#' library(tsibble)
+#' library(dplyr)
+#'
+#' tourism_hts <- tourism %>%
+#'   aggregate_key(State * Purpose,
+#'                 Trips = sum(Trips))
+#'
+#' fit <- tourism_hts %>%
+#'   model(base = ETS(Trips)) %>%
+#'   reconcile(ols = min_trace(base, method = "ols"),
+#'             icomb = icomb(base, train_size = 75))
+#' fit %>%
+#'   forecast(h = "3 years")
+#'
+#' # extracting results from cross-validation
+#' fit %>%
+#'   pull(icomb) %>%
+#'   attr("icombfit")
+#'
+#' # Parallelizing cross-validation
+#' library(future)
+#' plan(multisession, workers = 2)
+#'
+#' tourism_hts %>%
+#'   model(base = ETS(Trips)) %>%
+#'   reconcile(ols = min_trace(base, method = "ols"),
+#'             icomb = icomb(base, train_size = 75)) %>%
+#'   forecast(h = "3 years")
+#' plan(sequential)
 #'
 icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
                   standardize_response = FALSE, intercept = TRUE, lambda = NULL,
