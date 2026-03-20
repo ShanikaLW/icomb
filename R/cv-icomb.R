@@ -1,5 +1,10 @@
 #' Performs rolling forecast origin cross-validation for information combination
 #'
+#' Implements rolling-origin cross-validation for penalized multivariate regression
+#' within the Information Combination (IComb) framework, selecting the optimal lambda
+#'  based on out-of-sample 1-step-ahead prediction error and returning the fitted model,
+#'  coefficients, and performance metrics.
+#'
 #' @param fitted A matrix of size nobs x nvars containing the fitted values.
 #' @param actual A matrix containing the actual values.
 #' @param train_size The size of the initial training window.
@@ -32,6 +37,12 @@
 #' \item{fit}{An object of class `glmnet` fitted on the entire dataset.}
 #' \item{info}{A vector containing `lambda_max`, `lambda_best`, and the index of `lambda_best` in the `lambda` sequence.}
 #' \item{coefs}{Estimated coefficients corresponding to `lambda_best`.}
+#'
+#' @author Shanika L Wickramasuriya
+#' @references Nguyen, M., Vahid, F., & Wickramasuriya, S. L. (2025).
+#' Hierarchical Forecasting: The Role of Information Combination (Working Paper No. 11/25).
+#' Department of Econometrics and Business Statistics, Monash University.
+#' URL: \url{https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf}
 #' @export
 #'
 #' @examples
