@@ -1,5 +1,10 @@
 #' Calculate a sequence of penalty parameters
 #'
+#' Generates a decreasing sequence of regularization parameters for penalized
+#' multivariate regression by estimating the maximum lambda from the data and
+#' constructing a log-spaced path to a minimum value, with options for standardization
+#' and handling of zero-variance predictors and responses.
+#'
 #' @param x Input matrix, of dimension nobs x nvars; each row is an observation vector.
 #' `nvars` should be greater than one. In other words `x` should have 2 or more columns.
 #' `x` can be in the sparse matrix format (inherit from class "`sparseMatrix`" as in package `Matrix`).
@@ -19,6 +24,7 @@
 #' @param nlambda The number of lambda values. Default is 100.
 #'
 #' @returns A sequence of penalty parameters
+#' @author Shanika L Wickramasuriya
 #' @export
 #'
 #' @examples
