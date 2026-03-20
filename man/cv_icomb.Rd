@@ -63,7 +63,10 @@ A list containing
 \item{coefs}{Estimated coefficients corresponding to \code{lambda_best}.}
 }
 \description{
-Performs rolling forecast origin cross-validation for information combination
+Implements rolling-origin cross-validation for penalized multivariate regression
+within the Information Combination (IComb) framework, selecting the optimal lambda
+based on out-of-sample 1-step-ahead prediction error and returning the fitted model,
+coefficients, and performance metrics.
 }
 \examples{
 library(hts)
@@ -82,4 +85,13 @@ for (i in 1:7) {
  fitted[, i] <- fitted(fit)
 }
 out <- cv_icomb(fitted, ally, train_size = 70)
+}
+\references{
+Nguyen, M., Vahid, F., & Wickramasuriya, S. L. (2025).
+Hierarchical Forecasting: The Role of Information Combination (Working Paper No. 11/25).
+Department of Econometrics and Business Statistics, Monash University.
+URL: \url{https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf}
+}
+\author{
+Shanika L Wickramasuriya
 }

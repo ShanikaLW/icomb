@@ -45,7 +45,10 @@ If \code{nobs < nvars}, the default is \code{0.01}, otherwise \code{1e-04}.}
 A sequence of penalty parameters
 }
 \description{
-Calculate a sequence of penalty parameters
+Generates a decreasing sequence of regularization parameters for penalized
+multivariate regression by estimating the maximum lambda from the data and
+constructing a log-spaced path to a minimum value, with options for standardization
+and handling of zero-variance predictors and responses.
 }
 \examples{
 set.seed(2024)
@@ -57,4 +60,7 @@ y <- matrix(rnorm(n * k), ncol = k)
 glmnet::glmnet(x, y, family = "mgaussian", standardize = FALSE,
                standardize.response = FALSE, intercept = TRUE)$lambda
 lambda_path(x, y, lambda_min_ratio = "glmnet")
+}
+\author{
+Shanika L Wickramasuriya
 }
