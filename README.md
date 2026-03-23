@@ -36,16 +36,16 @@ library(lubridate)
 library(icomb)
 library(ggtime)
 
-tourism_hts <- tourism %>% 
+tourism_hts <- tourism |>  
   aggregate_key(State * Purpose,
                 Trips = sum(Trips)) 
 
-tourism_hts %>% 
-  model(base = ETS(Trips)) %>% 
+tourism_hts |>  
+  model(base = ETS(Trips)) |>  
   reconcile(ols = min_trace(base, method = "ols"),
-            icomb = icomb(base, train_size = 75)) %>% 
-  forecast(h = "3 years") %>% 
-  filter(Purpose == "Holiday", State == "Victoria") %>% 
+            icomb = icomb(base, train_size = 75)) |>  
+  forecast(h = "3 years") |>  
+  filter(Purpose == "Holiday", State == "Victoria") |>  
   autoplot(filter(tourism_hts, Purpose == "Holiday", 
                   State == "Victoria", year(Quarter) > 2010), level = NULL)
 ```
@@ -66,10 +66,10 @@ performed one after another with no parallelization.
 library(future)
 plan(multisession, workers = 2)
 
-tourism_hts %>% 
-  model(base = ETS(Trips)) %>% 
+tourism_hts |>  
+  model(base = ETS(Trips)) |>  
   reconcile(ols = min_trace(base, method = "ols"),
-            icomb = icomb(base, train_size = 75)) %>% 
+            icomb = icomb(base, train_size = 75))  |>  
   forecast(h = "3 years") 
 #> # A fable: 1,620 x 6 [1Q]
 #> # Key:     State, Purpose, .model [135]

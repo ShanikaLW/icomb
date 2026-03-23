@@ -47,30 +47,30 @@
 #' library(tsibble)
 #' library(dplyr)
 #'
-#' tourism_hts <- tourism %>%
+#' tourism_hts <- tourism |>
 #'   aggregate_key(State * Purpose,
 #'                 Trips = sum(Trips))
 #'
-#' fit <- tourism_hts %>%
-#'   model(base = ETS(Trips)) %>%
+#' fit <- tourism_hts |>
+#'   model(base = ETS(Trips)) |>
 #'   reconcile(ols = min_trace(base, method = "ols"),
 #'             icomb = icomb(base, train_size = 75))
-#' fit %>%
+#' fit |>
 #'   forecast(h = "3 years")
 #'
 #' # extracting results from cross-validation
-#' fit %>%
-#'   pull(icomb) %>%
+#' fit |>
+#'   pull(icomb) |>
 #'   attr("icombfit")
 #'
 #' # Parallelizing cross-validation
 #' library(future)
 #' plan(multisession, workers = 2)
 #'
-#' tourism_hts %>%
-#'   model(base = ETS(Trips)) %>%
+#' tourism_hts |>
+#'   model(base = ETS(Trips)) |>
 #'   reconcile(ols = min_trace(base, method = "ols"),
-#'             icomb = icomb(base, train_size = 75)) %>%
+#'             icomb = icomb(base, train_size = 75)) |>
 #'   forecast(h = "3 years")
 #' plan(sequential)
 #'
