@@ -46,14 +46,26 @@ tourism_hts <- tourism |>
   aggregate_key(State * Purpose,
                 Trips = sum(Trips)) 
 
-tourism_hts |>  
+fit <- tourism_hts |>  
   model(base = ETS(Trips)) |>  
   reconcile(ols = min_trace(base, method = "ols"),
-            icomb = icomb(base, train_size = 75)) |>  
+            icomb = icomb(base, train_size = 75))
+fit
+
+fit |> 
   forecast(h = "3 years") |>  
   filter(Purpose == "Holiday", State == "Victoria") |>  
   autoplot(filter(tourism_hts, Purpose == "Holiday", 
                   State == "Victoria", year(Quarter) > 2010), level = NULL)
+```
+We can compute probabilistic forecasts
+
+```{r}
+fit |> 
+  forecast(h = "3 years", bootstrap = TRUE, times = 1000) |> 
+  filter(Purpose == "Holiday", State == "Victoria") |>
+  autoplot(filter(tourism_hts, Purpose == "Holiday",
+                  State == "Victoria", year(Quarter) > 2010))
 ```
 
 This workflow can be parallelized to improve performance using the `future` package. By specifying a parallelization plan via `future::plan()` (e.g., `multisession` or `multicore`), users can control how computations are distributed across available workers. This allows the cross-validation procedure in the information combination approach to run in parallel without modifying the core code, while remaining flexible to different computing environments. If no plan is set, the default sequential strategy is used, meaning computations are performed one after another with no parallelization.
