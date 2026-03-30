@@ -28,10 +28,13 @@
 #' when fitting the final model on the entire dataset.
 #' The functions in the `glmnet` package are designed for efficiency by computing the entire regularization path
 #' (a sequence of lambda values) using "warm starts", which is often faster than computing a single fit. The default is `TRUE`.
+#'
+#' @seealso [`reconcile()`], [`aggregate_key()`]
 #' @importFrom tsibble index_var interval
-#' @importFrom purrr map map2 exec reduce
+#' @importFrom purrr map map2 exec reduce map_chr
 #' @importFrom dplyr full_join
 #' @importFrom fabletools response distribution_var
+#' @importFrom vctrs vec_data
 #'
 #' @returns A 'global' model which is icomb coherent
 #' @author Shanika L Wickramasuriya
@@ -74,6 +77,13 @@
 #'   forecast(h = "3 years")
 #' plan(sequential)
 #'
+#'# Extracting probabilistic forecasts
+#' fit |>
+#'   forecast(h = "3 years", bootstrap = TRUE, times = 1000) |>
+#'   filter(Purpose == "Holiday", State == "Victoria") |>
+#'   autoplot(filter(tourism_hts, Purpose == "Holiday",
+#'                   State == "Victoria", year(Quarter) > 2010))
+#'
 icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
                   standardize_response = FALSE, intercept = TRUE, lambda = NULL,
                   lambda_min_ratio = "expand",
@@ -99,6 +109,7 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
 }
 
 #' @export
+#' @rdname fabletools::forecast
 forecast.lst_icomb_mdl <- function(object, new_data = NULL, h = NULL,
                                    point_forecast = list(.mean = mean), ...){
 
@@ -115,6 +126,10 @@ compute_point_forecasts <- function(distribution, measures){
 
 calc <- function(f, ...){
   f(...)
+}
+
+dist_types <- function (dist) {
+  map_chr(vec_data(dist), function(x) class(x)[1])
 }
 
 reconcile_icomb_list <- function (fc, object, point_forecast)
@@ -141,7 +156,46 @@ reconcile_icomb_list <- function (fc, object, point_forecast)
 
   fc_mean <- split(fc_mean, row(fc_mean))
   # The 'distribution' is degenerate (no variance): use distributional::dist_degenerate(<means>)
-  fc_dist <- map(fc_mean, distributional::dist_degenerate)
+  # fc_dist <- map(fc_mean, distributional::dist_degenerate) # uncomment this if below doesn't work
+
+  fc_dist <- map(fc, function(x) x[[distribution_var(x)]])
+  dist_type <- lapply(fc_dist, function(x) dist_types(x))
+  dist_type <- unique(unlist(dist_type))
+  reconcile_icomb_paths <- function(x) {
+    t(as.matrix(predict(fit, newx = x[, !xconst_var, drop = FALSE],
+                        s = lambda_best,
+                        exact = exact)[, , 1]))
+  }
+
+  if (identical(dist_type, "dist_sample")) {
+    sample_size <- unique(unlist(lapply(fc_dist, function(x) unique(lengths(distributional::parameters(x)$x)))))
+    if (length(sample_size) != 1L)
+      cli::cli_abort("Cannot reconcile sample paths with different replication sizes.")
+
+    sample_horizon <- unique(lengths(fc_dist))
+    if (length(sample_horizon) != 1L)
+      cli::cli_abort("Cannot reconcile sample paths with different forecast horizon lengths.")
+
+    # Extract sample paths
+    # TO do: At the moment fabletools performs univariate block bootstrapping
+    # To do: This needs to be changed when Mitch fixes fabletoools
+    samples <- lapply(fc_dist, function(x) distributional::parameters(x)$x)
+    # Convert to array [samples,horizon,nodes]
+    samples <- array(unlist(samples, use.names = FALSE), dim = c(sample_size, sample_horizon, length(fc_dist)))
+
+    # Reconcile
+    samples <- apply(samples, 1, reconcile_icomb_paths, simplify = FALSE)
+    # Convert to array [nodes, horizon, samples]
+    samples <- array(unlist(samples), dim = c(length(fc_dist), sample_horizon, sample_size))
+
+    # Convert to distributions
+    fc_dist <- apply(
+      samples, 1L, simplify = FALSE,
+      function(x) unname(distributional::dist_sample(split(x, row(x))))
+    )
+  } else {
+    fc_dist <- map(fc_mean, distributional::dist_degenerate)
+  }
 
   map2(fc, fc_dist, function(fc, dist) {
     dimnames(dist) <- dimnames(fc[[distribution_var(fc)]])

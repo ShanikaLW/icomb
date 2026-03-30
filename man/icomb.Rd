@@ -68,32 +68,39 @@ library(fabletools)
 library(tsibble)
 library(dplyr)
 
-tourism_hts <- tourism \%>\%
+tourism_hts <- tourism |>
   aggregate_key(State * Purpose,
                 Trips = sum(Trips))
 
-fit <- tourism_hts \%>\%
-  model(base = ETS(Trips)) \%>\%
+fit <- tourism_hts |>
+  model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75))
-fit \%>\%
+fit |>
   forecast(h = "3 years")
 
 # extracting results from cross-validation
-fit \%>\%
-  pull(icomb) \%>\%
+fit |>
+  pull(icomb) |>
   attr("icombfit")
 
 # Parallelizing cross-validation
 library(future)
 plan(multisession, workers = 2)
 
-tourism_hts \%>\%
-  model(base = ETS(Trips)) \%>\%
+tourism_hts |>
+  model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
-            icomb = icomb(base, train_size = 75)) \%>\%
+            icomb = icomb(base, train_size = 75)) |>
   forecast(h = "3 years")
 plan(sequential)
+
+# Extracting probabilistic forecasts
+fit |>
+  forecast(h = "3 years", bootstrap = TRUE, times = 1000) |>
+  filter(Purpose == "Holiday", State == "Victoria") |>
+  autoplot(filter(tourism_hts, Purpose == "Holiday",
+                  State == "Victoria", year(Quarter) > 2010))
 
 }
 \references{
@@ -101,6 +108,9 @@ Nguyen, M., Vahid, F., & Wickramasuriya, S. L. (2025).
 Hierarchical Forecasting: The Role of Information Combination (Working Paper No. 11/25).
 Department of Econometrics and Business Statistics, Monash University.
 URL: \url{https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf}
+}
+\seealso{
+\code{\link[fabletools:reconcile]{fabletools::reconcile()}}, \code{\link[fabletools:aggregate_key]{fabletools::aggregate_key()}}
 }
 \author{
 Shanika L Wickramasuriya
