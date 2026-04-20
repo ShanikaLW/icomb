@@ -89,7 +89,7 @@
 icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
                   standardize_response = FALSE, intercept = TRUE, lambda = NULL,
                   lambda_min_ratio = "expand",
-                  nlambda = 100, maxit = 1e+07, exact = TRUE){
+                  nlambda = 100, maxit = 1e+07, thresh = 1e-07, exact = TRUE){
 
   # gets univariate fitted and actual values
   fitted <- map(models, fitted)
@@ -101,13 +101,13 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
   icomb_fit <- cv_icomb(fitted = fitted, actual = actual, train_size = train_size, alpha = alpha,
                         standardize = standardize, standardize_response = standardize_response,
                         intercept = intercept, lambda = lambda, lambda_min_ratio = lambda_min_ratio,
-                        nlambda = nlambda, maxit = maxit)
+                        nlambda = nlambda, maxit = maxit, thresh = thresh)
 
   # return a 'global' model which is icomb coherent
   structure(models, class = c("lst_icomb_mdl", "lst_mdl", "list"),
             alpha = alpha, standardize = standardize, standardize_response = standardize_response,
             intercept = intercept, lambda = lambda, lambda_min_ratio = lambda_min_ratio,
-            nlambda = nlambda, maxit = maxit, icombfit = icomb_fit, exact = exact)
+            nlambda = nlambda, maxit = maxit, thresh = thresh, icombfit = icomb_fit, exact = exact)
 }
 
 #' @export

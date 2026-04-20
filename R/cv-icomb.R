@@ -25,6 +25,8 @@
 #' If `nobs < nvars`, the default is `0.01`, otherwise `1e-04`.
 #' @param nlambda The number of lambda values. Default is 100.
 #' @param maxit Maximum number of passes over the data for all lambda values. Default is \eqn{10^7}.
+#' @param thresh Convergence threshold for coordinate descent. Each inner coordinate-descent loop continues until the maximum change
+#' in the objective after any coefficient update is less than thresh times the null deviance. Defaults value is 1e-07.
 #' @param exact A logical flag indicating whether to use a sequence of lambda values (from `lambda_max` to `lambda_best`)
 #' when fitting the final model on the entire dataset.
 #' The functions in the `glmnet` package are designed for efficiency by computing the entire regularization path
@@ -66,7 +68,7 @@
 cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE,
                       standardize_response = FALSE, intercept = TRUE, lambda = NULL,
                       lambda_min_ratio = "expand",
-                      nlambda = 100, maxit = 1e+07, exact = TRUE) {
+                      nlambda = 100, maxit = 1e+07, thresh = 1e-07, exact = TRUE) {
   # remove any missing values in the fitted and actual values
   mask <- complete.cases(fitted) & complete.cases(actual)
   fitted <- fitted[mask, ]
@@ -131,7 +133,8 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
     }
 
     fit <- glmnet(xdata[, !xconst_var], ydata, family = "mgaussian", standardize = standardize,
-                  standardize.response = standardize_response, intercept = intercept, alpha = alpha, lambda = lambda, maxit = maxit)
+                  standardize.response = standardize_response, intercept = intercept,
+                  alpha = alpha, lambda = lambda, maxit = maxit, thresh = thresh)
     predict(fit, newx = fitted[train_size + i, !xconst_var, drop = FALSE])
   }, future.seed = TRUE)
   recon <- array(t(recon_list), dim = c(niter, dimy[2], length(lambda)))
@@ -162,7 +165,7 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
   if (!exact) {
     fit <- glmnet(fitted[, !xconst_var], actual, family = "mgaussian", standardize = standardize,
                   standardize.response = standardize_response, intercept = intercept, alpha = alpha,
-                  lambda = lambda_best, maxit = maxit)
+                  lambda = lambda_best, maxit = maxit, thresh = thresh)
     coefs <- coef(fit)
     best_coef <- sapply(coefs, function(x) x[, idx_min])
     if (intercept)
@@ -174,7 +177,7 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
     lambda_subset <- lambda[lambda >= lambda_best]
     fit <- glmnet(fitted[, !xconst_var], actual, family = "mgaussian", standardize = standardize,
                   standardize.response = standardize_response, intercept = intercept, alpha = alpha,
-                  lambda = lambda_subset, maxit = maxit)
+                  lambda = lambda_subset, maxit = maxit, thresh = thresh)
     coefs <- coef(fit)
     best_coef <- sapply(coefs, function(x) x[, idx_min])
     if (intercept)
