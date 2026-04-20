@@ -31,7 +31,7 @@
 #' (a sequence of lambda values) using "warm starts", which is often faster than computing a single fit. The default is `TRUE`.
 #' @importFrom glmnet glmnet
 #' @importFrom future.apply future_sapply
-#' @importFrom stats coef predict
+#' @importFrom stats coef predict complete.cases
 #'
 #' @returns A list containing
 #' \item{fit}{An object of class `glmnet` fitted on the entire dataset.}
@@ -43,9 +43,8 @@
 #' Hierarchical Forecasting: The Role of Information Combination (Working Paper No. 11/25).
 #' Department of Econometrics and Business Statistics, Monash University.
 #' URL: \url{https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf}
-#' @export
 #'
-#' @examples
+#' @examples \dontrun{
 #' library(hts)
 #' library(forecast)
 #' set.seed(2024)
@@ -62,23 +61,30 @@
 #'  fitted[, i] <- fitted(fit)
 #'}
 #' out <- cv_icomb(fitted, ally, train_size = 70)
+#' }
+#' @keywords internal
 cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE,
                       standardize_response = FALSE, intercept = TRUE, lambda = NULL,
                       lambda_min_ratio = "expand",
                       nlambda = 100, maxit = 1e+07, exact = TRUE) {
+  # remove any missing values in the fitted and actual values
+  mask <- complete.cases(fitted) & complete.cases(actual)
+  fitted <- fitted[mask, ]
+  actual <- actual[mask, ]
+
   dimx <- dim(fitted)
   if (is.null(dimx) | (dimx[2] <= 1))
     cli::cli_abort("{.var fitted} should be a matrix with 2 or more columns")
-  if (any(is.na(fitted)))
-    cli::cli_abort("{.var fitted} has missing values")
+  # if (any(is.na(fitted)))
+  #   cli::cli_abort("{.var fitted} has missing values")
   nobs <- dimx[1]
   nvars <- dimx[2]
 
   dimy <- dim(actual)
   if (is.null(dimy) | (dimy[2] <= 1))
     cli::cli_abort("{.var actual} should be a matrix with 2 or more columns")
-  if (any(is.na(actual)))
-    cli::cli_abort("{.var actual} has missing values")
+  # if (any(is.na(actual)))
+  #   cli::cli_abort("{.var actual} has missing values")
 
   if (dimy[1] != dimx[1])
     cli::cli_abort("number of observations in {.var actual} and {.var fitted} does not match")
@@ -159,6 +165,8 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
                   lambda = lambda_best, maxit = maxit)
     coefs <- coef(fit)
     best_coef <- sapply(coefs, function(x) x[, idx_min])
+    if (intercept)
+      rownames(best_coef)[1] <- "intercept"
     list(fit = fit,
          info = list(lambda_info = lambda_info, mse_info = mse, nnzeros = fit$dfmat[1, 1]),
          coefs = best_coef)
@@ -169,6 +177,8 @@ cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE
                   lambda = lambda_subset, maxit = maxit)
     coefs <- coef(fit)
     best_coef <- sapply(coefs, function(x) x[, idx_min])
+    if (intercept)
+      rownames(best_coef)[1] <- "intercept"
     list(fit = fit,
          info = list(lambda_info = lambda_info, mse_info = mse, nnzeros = fit$dfmat[1, idx_min]),
          coefs = best_coef)

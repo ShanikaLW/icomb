@@ -69,6 +69,7 @@ based on out-of-sample 1-step-ahead prediction error and returning the fitted mo
 coefficients, and performance metrics.
 }
 \examples{
+\dontrun{
 library(hts)
 library(forecast)
 set.seed(2024)
@@ -86,6 +87,7 @@ for (i in 1:7) {
 }
 out <- cv_icomb(fitted, ally, train_size = 70)
 }
+}
 \references{
 Nguyen, M., Vahid, F., & Wickramasuriya, S. L. (2025).
 Hierarchical Forecasting: The Role of Information Combination (Working Paper No. 11/25).
@@ -95,3 +97,4 @@ URL: \url{https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp1
 \author{
 Shanika L Wickramasuriya
 }
+\keyword{internal}
