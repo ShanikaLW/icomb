@@ -1,26 +1,45 @@
-#' @importFrom tidyr pivot_longer
 node_present <- function(x) {
-  if (!inherits(x, "lst_icomb_mdl"))
-    return(rep(TRUE, length(x)))
-
   betas <- attr(x, "icombfit")$coefs
   vals <- rowSums(abs(betas)) > sqrt(.Machine$double.eps)
 
-  if ("(Intercept)" %in% rownames(betas))
+  if ("intercept" %in% rownames(betas))
     vals[-1]
   else vals
 }
 
-series_included <- function(x) {
-  mbl_vars <- mable_vars(x)
-  as_tibble(x) |>
-    mutate(across(all_of(mbl_vars), node_present)) |>
-    pivot_longer(mbl_vars, names_to = ".model", values_to = ".included")
-}
-
+#' Glance a mable which contains an information combination reconciliation method
+#'
+#' It uses the models within a mable to produce a one row summary statistics of their fits.
+#'
+#' @param x A mable
+#' @param ... Arguments for model methods
+#'
+#' @returns The tibble contains the output of \code{glance()} for that model,
+#' with an added logical column \code{.included} indicating whether the corresponding node is present
+#' in the reconciliation process when the information combination method is used.
+#'
+#' @examples
+#' library(fable)
+#' library(fabletools)
+#' library(tsibble)
+#' library(dplyr)
+#'
+#' tourism_hts <- tourism |>
+#'   aggregate_key(State * Purpose,
+#'                 Trips = sum(Trips))
+#'
+#' fit <- tourism_hts |>
+#'   model(base = ETS(Trips)) |>
+#'   reconcile(ols = min_trace(base, method = "ols"),
+#'             icomb = icomb(base, train_size = 75))
+#'
+#' fit |>
+#'   glance()
+#'
 #' @export
-inspect_reconciliation <- function(x, ...){
-  mbl_vars <- mable_vars(x)
-  glance(x, ...) |>
-    full_join(series_included(x), by = c(".model", key_vars(x)))
+#' @importFrom dplyr mutate
+glance.lst_icomb_mdl <- function(x, ...) {
+  map(x, glance, ...) |>
+    map2(node_present(x),
+         ~mutate(.x, .included = .y))
 }
