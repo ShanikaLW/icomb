@@ -92,9 +92,9 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
                   nlambda = 100, maxit = 1e+07, exact = TRUE){
 
   # gets univariate fitted and actual values
-  fitted <- map(models, function(x) fitted(x))
+  fitted <- map(models, fitted)
   fitted <- unname(as.matrix(reduce(fitted, full_join, by = index_var(fitted[[1]]))[, -1]))
-  actual <- map(models, function(x) response(x))
+  actual <- map(models, response)
   actual <- unname(as.matrix(reduce(actual, full_join, by = index_var(actual[[1]]))[, -1]))
 
   # fit icomb
