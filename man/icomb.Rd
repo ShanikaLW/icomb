@@ -67,6 +67,8 @@ library(fable)
 library(fabletools)
 library(tsibble)
 library(dplyr)
+library(lubridate)
+library(ggtime)
 
 tourism_hts <- tourism |>
   aggregate_key(State * Purpose,

@@ -49,6 +49,8 @@
 #' library(fabletools)
 #' library(tsibble)
 #' library(dplyr)
+#' library(lubridate)
+#' library(ggtime)
 #'
 #' tourism_hts <- tourism |>
 #'   aggregate_key(State * Purpose,
@@ -109,7 +111,6 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
 }
 
 #' @export
-#' @rdname fabletools::forecast
 forecast.lst_icomb_mdl <- function(object, new_data = NULL, h = NULL,
                                    point_forecast = list(.mean = mean), ...){
 
@@ -143,7 +144,12 @@ reconcile_icomb_list <- function (fc, object, point_forecast)
   models <- object
   fitted <- map(models, function(x) fitted(x))
   fitted <- unname(as.matrix(reduce(fitted, full_join, by = index_var(fitted[[1]]))[, -1]))
-  xsd <- sqrt(colMeans(scale(fitted, center = TRUE, scale = FALSE)^2))
+
+  actual <- map(models, function(x) response(x))
+  actual <- unname(as.matrix(reduce(actual, full_join, by = index_var(actual[[1]]))[, -1]))
+  mask <- complete.cases(fitted) & complete.cases(actual)
+
+  xsd <- sqrt(colMeans(scale(fitted[mask, ], center = TRUE, scale = FALSE)^2))
   xconst_var <- xsd < sqrt(.Machine$double.eps) # constant predictors
   exact <- attr(object, "exact")
   icomb_fit <- attr(object, "icombfit")
