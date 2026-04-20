@@ -4,6 +4,7 @@
 \name{reexports}
 \alias{reexports}
 \alias{forecast}
+\alias{glance}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -11,6 +12,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{generics}{\code{\link[generics]{forecast}}}
+  \item{generics}{\code{\link[generics]{forecast}}, \code{\link[generics]{glance}}}
 }}
 
