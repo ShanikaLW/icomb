@@ -29,10 +29,25 @@ Imports:
     generics,
     glmnet,
     purrr,
-    tsibble
+    tsibble,
+    vctrs
 Suggests: 
+    broom,
     fable,
+    feasts,
     forecast,
     future,
+    ggplot2,
     ggtime,
-    hts
+    hts,
+    knitr,
+    lubridate,
+    plotly,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    tibble,
+    tidyr
+VignetteBuilder: knitr
+Depends: 
+    R (>= 4.1.0)
+Config/testthat/edition: 3
