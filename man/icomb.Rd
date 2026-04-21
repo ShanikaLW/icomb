@@ -15,6 +15,7 @@ icomb(
   lambda_min_ratio = "expand",
   nlambda = 100,
   maxit = 1e+07,
+  thresh = 1e-07,
   exact = TRUE
 )
 }
