@@ -1,0 +1,37 @@
+year <- sub("-.*", "", meta$Date)
+if (!length(year))
+  year <- substr(Sys.Date(), 1, 4)
+vers <- meta$Version
+if (is.null(vers))
+  vers <- packageVersion("icomb")
+vers <- paste("R package version", vers)
+
+# Grab authors from DESCRIPTION file
+# authors <- eval(parse(text=as.list(read.dcf("../DESCRIPTION")[1, ])$`Authors@R`))
+# authors <- authors[sapply(authors$role, function(roles) "aut" %in% roles)]
+# authors <- sapply(authors, function(author) paste(author$given, author$family))
+# authors <- paste(authors, collapse = " and ")
+
+citHeader("To cite the icomb package in publications, please use:")
+
+bibentry(bibtype = "Manual",
+  title = "{icomb}: orecasting Hierarchical Time Series Using Information Combination",
+  author = "Shanika L Wickramasuriya",
+  year = year,
+  note = vers,
+  url = "",
+  doi = ""
+)
+
+bibentry(bibtype = "TechReport",
+  title         = "Hierarchical Forecasting: The Role of Information",
+  author        = c(as.person("Minh Nguyen"), as.person("Farshid Vahid"), as.person("Shanika L. Wickramasuriya")),
+  type          = "Monash Econometrics and Business Statistics Working Papers",
+  institution   = "Monash University, Department of Econometrics {and} Business Statistics",
+  number        = "11/25",
+  year          = 2025,
+  url           = "https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf"
+)
+
+
+
