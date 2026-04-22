@@ -49,6 +49,9 @@ If \code{nobs < nvars}, the default is \code{0.01}, otherwise \code{1e-04}.}
 
 \item{maxit}{Maximum number of passes over the data for all lambda values. Default is \eqn{10^7}.}
 
+\item{thresh}{Convergence threshold for coordinate descent. Each inner coordinate-descent loop continues until the maximum change
+in the objective after any coefficient update is less than thresh times the null deviance. Defaults value is 1e-07.}
+
 \item{exact}{A logical flag indicating whether to use a sequence of lambda values (from \code{lambda_max} to \code{lambda_best})
 when fitting the final model on the entire dataset.
 The functions in the \code{glmnet} package are designed for efficiency by computing the entire regularization path

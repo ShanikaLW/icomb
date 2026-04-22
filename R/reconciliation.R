@@ -24,6 +24,8 @@
 #' If `nobs < nvars`, the default is `0.01`, otherwise `1e-04`.
 #' @param nlambda The number of lambda values. Default is 100.
 #' @param maxit Maximum number of passes over the data for all lambda values. Default is \eqn{10^7}.
+#' @param thresh Convergence threshold for coordinate descent. Each inner coordinate-descent loop continues until the maximum change
+#' in the objective after any coefficient update is less than thresh times the null deviance. Defaults value is 1e-07.
 #' @param exact A logical flag indicating whether to use a sequence of lambda values (from `lambda_max` to `lambda_best`)
 #' when fitting the final model on the entire dataset.
 #' The functions in the `glmnet` package are designed for efficiency by computing the entire regularization path
