@@ -54,11 +54,11 @@
 #' library(lubridate)
 #' library(ggtime)
 #'
-#' tourism_hts <- tourism |>
+#' tourism_gts <- tourism |>
 #'   aggregate_key(State * Purpose,
 #'                 Trips = sum(Trips))
 #'
-#' fit <- tourism_hts |>
+#' fit <- tourism_gts |>
 #'   model(base = ETS(Trips)) |>
 #'   reconcile(ols = min_trace(base, method = "ols"),
 #'             icomb = icomb(base, train_size = 75))
@@ -74,7 +74,7 @@
 #' library(future)
 #' plan(multisession, workers = 2)
 #'
-#' tourism_hts |>
+#' tourism_gts |>
 #'   model(base = ETS(Trips)) |>
 #'   reconcile(ols = min_trace(base, method = "ols"),
 #'             icomb = icomb(base, train_size = 75)) |>
@@ -85,7 +85,7 @@
 #' fit |>
 #'   forecast(h = "3 years", bootstrap = TRUE, times = 1000) |>
 #'   filter(Purpose == "Holiday", State == "Victoria") |>
-#'   autoplot(filter(tourism_hts, Purpose == "Holiday",
+#'   autoplot(filter(tourism_gts, Purpose == "Holiday",
 #'                   State == "Victoria", year(Quarter) > 2010))
 #'
 icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
@@ -140,6 +140,24 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
 #'   it will be named `.distribution`.
 #' - Point forecasts computed from the distribution using the functions in the
 #'   `point_forecast` argument.
+#'
+#' @examples
+#' library(fable)
+#' library(fabletools)
+#' library(tsibble)
+#' library(distributional)
+#'
+#' tourism_gts <- tourism |>
+#'   aggregate_key(State * Purpose,
+#'                 Trips = sum(Trips))
+#'
+#' fit <- tourism_gts |>
+#'   model(base = ETS(Trips)) |>
+#'   reconcile(ols = min_trace(base, method = "ols"),
+#'             icomb = icomb(base, train_size = 75))
+#' fit |>
+#'   forecast(bootstrap = TRUE, times = 1000) |>
+#'   hilo(level = c(80, 95))
 #'
 #' @export
 forecast.lst_icomb_mdl <- function(object, new_data = NULL, h = NULL,
