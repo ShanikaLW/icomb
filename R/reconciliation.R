@@ -112,6 +112,35 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
             nlambda = nlambda, maxit = maxit, thresh = thresh, icombfit = icomb_fit, exact = exact)
 }
 
+#' Produce coherent forecasts using the information combination method
+#'
+#' The forecast function allows you to generate coherent future predictions for hierarchical or grouped time series based on fitted models.
+#'
+#' The forecasts returned contain both point forecasts and their distribution.
+#' A specific forecast interval can be extracted from the distribution using the
+#' [`hilo()`] function. These intervals are stored in a single column using the `hilo` class, to
+#' extract the numerical upper and lower bounds you can use [`unpack_hilo()`].
+#'
+#' @param object The time series models used to produce the forecasts.
+#'
+#' @param new_data  A `tsibble` containing future information used to forecast.
+#' @param h The forecast horizon (can be used instead of `new_data` for regular
+#' time series with no exogenous regressors).
+#' @param point_forecast The point forecast measure(s) which should be returned
+#' in the resulting fable. Specify as a named list of functions which accept
+#' a distribution and return a vector.
+#' @param ... Additional arguments for forecast model methods.
+#'
+#' @return
+#' A fable containing the following columns:
+#' - `.model`: The name of the model used to obtain the forecast. Taken from
+#'   the column names of models in the provided mable.
+#' - The forecast distribution. The name of this column will be the same as the
+#'   dependent variable in the model(s). If multiple dependent variables exist,
+#'   it will be named `.distribution`.
+#' - Point forecasts computed from the distribution using the functions in the
+#'   `point_forecast` argument.
+#'
 #' @export
 forecast.lst_icomb_mdl <- function(object, new_data = NULL, h = NULL,
                                    point_forecast = list(.mean = mean), ...){
