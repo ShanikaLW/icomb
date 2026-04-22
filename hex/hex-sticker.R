@@ -135,10 +135,19 @@ small_hexes <- do.call(
 # ============================================================
 # PLOT
 # ============================================================
+outer_hex2 <- outer_hex |>
+  mutate(x = x * zoom_outer,
+         y = y * zoom_outer)
+
+xmin <- min(outer_hex2$x)
+xmax <- max(outer_hex2$x)
+ymin <- min(outer_hex2$y)
+ymax <- max(outer_hex2$y)
+
 zoom_outer <- 1.05
 basicplot <- ggplot() +
   geom_polygon(
-    data = outer_hex |> mutate(x = x * zoom_outer, y = y * zoom_outer),
+    data = outer_hex2,
     aes(x, y),
     fill = "#F9B624",
     colour = NA
@@ -164,9 +173,10 @@ basicplot <- ggplot() +
     colour = "white",
     vjust = 0.4
   ) +
-  coord_equal() +
-  # theme(plot.margin = margin(0, 0, 0, 0)) +
+  coord_equal(expand = FALSE, xlim = c(xmin, xmax),
+              ylim = c(ymin, ymax), clip = "off") +
   theme_void() +
+  theme(plot.margin = margin(0, 0, 0, 0)) +
   scale_fill_identity()
 
 bee_centers <- small_hexes |>
@@ -180,7 +190,10 @@ bee_centers <- small_hexes |>
 basicplot_bees <- basicplot +
   geom_image(data = bee_centers,
              aes(x = cx, y = cy, image = image), size = 0.15)
-ggsave("hex/icomb.pdf", basicplot_bees, width = 5, height = 5, dpi = 1200, bg = "transparent")
-ggsave("hex/icomb.png", basicplot_bees, width = 5, height = 5, dpi = 1200, bg = "transparent")
-ggsave("hex/icomb.svg", basicplot_bees, width = 5, height = 5, dpi = 1200, bg = "transparent")
+
+ratio <- (xmax - xmin) / (ymax - ymin)
+
+ggsave("hex/icomb.pdf", basicplot_bees, width = 5 * ratio, height = 5, dpi = 1200, bg = "transparent")
+ggsave("hex/icomb.png", basicplot_bees, width = 5 * ratio, height = 5, dpi = 1200, bg = "transparent")
+ggsave("hex/icomb.svg", basicplot_bees, width = 5 * ratio, height = 5, dpi = 1200, bg = "transparent")
 
