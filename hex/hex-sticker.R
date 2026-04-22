@@ -2,6 +2,7 @@ library(ggplot2)
 library(ggimage)
 library(ggpath)
 library(cropcircles)
+library(magick)
 
 # ============================================================
 # SETTINGS
@@ -137,7 +138,7 @@ small_hexes <- do.call(
 # PLOT
 # ============================================================
 
-baiscplot <- ggplot() +
+basicplot <- ggplot() +
   geom_polygon(
     data = small_hexes,
     aes(x, y, group = id),
@@ -171,24 +172,30 @@ bee_centers <- small_hexes |>
   mutate(cy = cy + c(0.5, 0),
          image = c("hex/bee.png", "hex/bee_reversed.png"))
 
-baiscplot_bees <- baiscplot +
+basicplot_bees <- basicplot +
   geom_image(data = bee_centers,
              aes(x = cx, y = cy, image = image), size = 0.15)
-ggsave("hex/basic_plot.pdf", baiscplot_bees, height = 5, width = 5, dpi = 600)
-ggsave("hex/basic_plot.png", baiscplot_bees, height = 5, width = 5, dpi = 600)
+ggsave("hex/basic_plot.pdf", basicplot_bees, height = 5, width = 5, dpi = 600)
+ggsave("hex/basic_plot.png", basicplot_bees, height = 5, width = 5, dpi = 600)
 
 # Crop the image
-
 img_cropped <- hex_crop(
   images = "hex/basic_plot.png",
   border_colour = "#F9B624",
   border_size = 12
 )
 
+img <- image_read(img_cropped)
 
-cropped_hex <- ggplot() +
-  geom_from_path(aes(0.5, 0.5, path = img_cropped)) +
-  theme_void() -> myplot3
+img_240x278 <- img |>
+  image_resize("240x240") |>
+  image_extent("240x278", gravity = "center", color = "transparent")
 
-ggsave("hex/hex.png", cropped_hex, height = 5, width = 5, dpi = 600)
+image_write(img_240x278, "hex/logo_240x278.png")
+
+# cropped_hex <- ggplot() +
+#   geom_from_path(aes(0.5, 0.5, path = img_cropped)) +
+#   theme_void()
+#
+# ggsave("hex/hex.png", cropped_hex, height = 5, width = 5, dpi = 600)
 
