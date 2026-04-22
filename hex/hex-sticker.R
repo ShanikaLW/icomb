@@ -1,8 +1,6 @@
 library(ggplot2)
 library(ggimage)
-library(ggpath)
-library(cropcircles)
-library(magick)
+library(dplyr)
 
 # ============================================================
 # SETTINGS
@@ -137,8 +135,14 @@ small_hexes <- do.call(
 # ============================================================
 # PLOT
 # ============================================================
-
+zoom_outer <- 1.05
 basicplot <- ggplot() +
+  geom_polygon(
+    data = outer_hex |> mutate(x = x * zoom_outer, y = y * zoom_outer),
+    aes(x, y),
+    fill = "#F9B624",
+    colour = NA
+  ) +
   geom_polygon(
     data = small_hexes,
     aes(x, y, group = id),
@@ -176,17 +180,7 @@ bee_centers <- small_hexes |>
 basicplot_bees <- basicplot +
   geom_image(data = bee_centers,
              aes(x = cx, y = cy, image = image), size = 0.15)
-ggsave("hex/basic_plot.pdf", basicplot_bees, width = 5, height = 5, dpi = 600, bg = "transparent")
-ggsave("hex/basic_plot.png", basicplot_bees, width = 5, height = 5, dpi = 600, bg = "transparent")
-
-# Crop the image
-img_cropped <- hex_crop(
-  images = "hex/basic_plot.png",
-  border_colour = "#F9B624",
-  border_size = 14
-)
-
-img <- image_read(img_cropped)
-img_big <- image_resize(img, "240x278")
-image_write(img_big, "hex/hex.png")
+ggsave("hex/icomb.pdf", basicplot_bees, width = 5, height = 5, dpi = 1200, bg = "transparent")
+ggsave("hex/icomb.png", basicplot_bees, width = 5, height = 5, dpi = 1200, bg = "transparent")
+ggsave("hex/icomb.svg", basicplot_bees, width = 5, height = 5, dpi = 1200, bg = "transparent")
 
