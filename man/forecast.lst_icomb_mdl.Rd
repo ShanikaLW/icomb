@@ -47,3 +47,22 @@ A specific forecast interval can be extracted from the distribution using the
 \code{\link[distributional:hilo]{distributional::hilo()}} function. These intervals are stored in a single column using the \code{hilo} class, to
 extract the numerical upper and lower bounds you can use \code{\link[fabletools:unpack_hilo]{fabletools::unpack_hilo()}}.
 }
+\examples{
+library(fable)
+library(fabletools)
+library(tsibble)
+library(distributional)
+
+tourism_gts <- tourism |>
+  aggregate_key(State * Purpose,
+                Trips = sum(Trips))
+
+fit <- tourism_gts |>
+  model(base = ETS(Trips)) |>
+  reconcile(ols = min_trace(base, method = "ols"),
+            icomb = icomb(base, train_size = 75))
+fit |>
+  forecast(bootstrap = TRUE, times = 1000) |>
+  hilo(level = c(80, 95))
+
+}

@@ -74,11 +74,11 @@ library(dplyr)
 library(lubridate)
 library(ggtime)
 
-tourism_hts <- tourism |>
+tourism_gts <- tourism |>
   aggregate_key(State * Purpose,
                 Trips = sum(Trips))
 
-fit <- tourism_hts |>
+fit <- tourism_gts |>
   model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75))
@@ -94,7 +94,7 @@ fit |>
 library(future)
 plan(multisession, workers = 2)
 
-tourism_hts |>
+tourism_gts |>
   model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75)) |>
@@ -105,7 +105,7 @@ plan(sequential)
 fit |>
   forecast(h = "3 years", bootstrap = TRUE, times = 1000) |>
   filter(Purpose == "Holiday", State == "Victoria") |>
-  autoplot(filter(tourism_hts, Purpose == "Holiday",
+  autoplot(filter(tourism_gts, Purpose == "Holiday",
                   State == "Victoria", year(Quarter) > 2010))
 
 }

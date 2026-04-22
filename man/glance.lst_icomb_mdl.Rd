@@ -25,11 +25,11 @@ library(fabletools)
 library(tsibble)
 library(dplyr)
 
-tourism_hts <- tourism |>
+tourism_gts <- tourism |>
   aggregate_key(State * Purpose,
                 Trips = sum(Trips))
 
-fit <- tourism_hts |>
+fit <- tourism_gts |>
   model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75))
