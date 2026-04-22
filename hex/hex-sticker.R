@@ -155,12 +155,13 @@ basicplot <- ggplot() +
   geom_text(
     data = mid_centers,
     aes(cx, cy, label = label),
-    size = 15,
+    size = 14,
     fontface = "bold",
     colour = "white",
     vjust = 0.4
   ) +
   coord_equal() +
+  # theme(plot.margin = margin(0, 0, 0, 0)) +
   theme_void() +
   scale_fill_identity()
 
@@ -175,27 +176,17 @@ bee_centers <- small_hexes |>
 basicplot_bees <- basicplot +
   geom_image(data = bee_centers,
              aes(x = cx, y = cy, image = image), size = 0.15)
-ggsave("hex/basic_plot.pdf", basicplot_bees, height = 5, width = 5, dpi = 600)
-ggsave("hex/basic_plot.png", basicplot_bees, height = 5, width = 5, dpi = 600)
+ggsave("hex/basic_plot.pdf", basicplot_bees, width = 5, height = 5, dpi = 600, bg = "transparent")
+ggsave("hex/basic_plot.png", basicplot_bees, width = 5, height = 5, dpi = 600, bg = "transparent")
 
 # Crop the image
 img_cropped <- hex_crop(
   images = "hex/basic_plot.png",
   border_colour = "#F9B624",
-  border_size = 12
+  border_size = 14
 )
 
 img <- image_read(img_cropped)
-
-img_240x278 <- img |>
-  image_resize("240x240") |>
-  image_extent("240x278", gravity = "center", color = "transparent")
-
-image_write(img_240x278, "hex/logo_240x278.png")
-
-# cropped_hex <- ggplot() +
-#   geom_from_path(aes(0.5, 0.5, path = img_cropped)) +
-#   theme_void()
-#
-# ggsave("hex/hex.png", cropped_hex, height = 5, width = 5, dpi = 600)
+img_big <- image_resize(img, "240x278")
+image_write(img_big, "hex/hex.png")
 
