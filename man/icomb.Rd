@@ -66,6 +66,9 @@ combining information from multiple base forecasts through a regression-based fr
 that can be estimated using penalized regression techniques. The penalty parameter is estimated
 using the rolling forecast origin cross-validation.
 }
+\note{
+Missing values are removed prior to applying the information combination method.
+}
 \examples{
 library(fable)
 library(fabletools)

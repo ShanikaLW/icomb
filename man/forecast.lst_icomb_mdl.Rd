@@ -35,7 +35,7 @@ the column names of models in the provided mable.
 dependent variable in the model(s). If multiple dependent variables exist,
 it will be named \code{.distribution}.
 \item Point forecasts computed from the distribution using the functions in the
-\code{point_forecast} argument.
+\code{point_forecast} argument. If \code{bootstrap = TRUE}, point forecasts are generated using bootstrapped sample paths.
 }
 }
 \description{

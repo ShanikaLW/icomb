@@ -31,6 +31,8 @@
 #' The functions in the `glmnet` package are designed for efficiency by computing the entire regularization path
 #' (a sequence of lambda values) using "warm starts", which is often faster than computing a single fit. The default is `TRUE`.
 #'
+#' @note Missing values are removed prior to applying the information combination method.
+#'
 #' @seealso [`reconcile()`], [`aggregate_key()`]
 #' @importFrom tsibble index_var interval
 #' @importFrom purrr map map2 exec reduce map_chr
@@ -139,7 +141,7 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
 #'   dependent variable in the model(s). If multiple dependent variables exist,
 #'   it will be named `.distribution`.
 #' - Point forecasts computed from the distribution using the functions in the
-#'   `point_forecast` argument.
+#'   `point_forecast` argument. If `bootstrap = TRUE`, point forecasts are generated using bootstrapped sample paths.
 #'
 #' @examples
 #' library(fable)
