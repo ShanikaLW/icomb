@@ -1,0 +1,24 @@
+url: https://shanikalw.github.io/icomb/
+template:
+  bootstrap: 5
+  bslib:
+    navbar-dark-hover-color: "#F9B624"
+    navbar-dark-brand-color: "#ffffff"
+    navbar-dark-brand-hover-color: "#F9B624"
+  math-rendering: katex
+
+navbar:
+  bg: dark
+  left:
+  - text: Reference
+    href: reference/index.html
+  - text: Vignettes
+    href: articles/icomb.html
+  - text: Manuscript
+    href: https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf
+  - text: Changelog
+    href: news/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/ShanikaLW/icomb
+    aria-label: View on CRAN
