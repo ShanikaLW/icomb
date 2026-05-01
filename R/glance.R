@@ -19,6 +19,7 @@ node_present <- function(x) {
 #' in the reconciliation process when the information combination method is used.
 #'
 #' @examples
+#' \donttest{
 #' library(fable)
 #' library(fabletools)
 #' library(tsibble)
@@ -35,6 +36,7 @@ node_present <- function(x) {
 #'
 #' fit |>
 #'   glance()
+#' }
 #'
 #' @export
 #' @importFrom dplyr mutate

@@ -48,6 +48,7 @@ A specific forecast interval can be extracted from the distribution using the
 extract the numerical upper and lower bounds you can use \code{\link[fabletools:unpack_hilo]{fabletools::unpack_hilo()}}.
 }
 \examples{
+\donttest{
 library(fable)
 library(fabletools)
 library(tsibble)
@@ -64,5 +65,6 @@ fit <- tourism_gts |>
 fit |>
   forecast(bootstrap = TRUE, times = 1000) |>
   hilo(level = c(80, 95))
+}
 
 }

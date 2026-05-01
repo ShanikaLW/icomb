@@ -70,6 +70,7 @@ using the rolling forecast origin cross-validation.
 Missing values are removed prior to applying the information combination method.
 }
 \examples{
+\donttest{
 library(fable)
 library(fabletools)
 library(tsibble)
@@ -110,6 +111,7 @@ fit |>
   filter(Purpose == "Holiday", State == "Victoria") |>
   autoplot(filter(tourism_gts, Purpose == "Holiday",
                   State == "Victoria", year(Quarter) > 2010))
+}
 
 }
 \references{

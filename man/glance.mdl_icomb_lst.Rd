@@ -20,6 +20,7 @@ in the reconciliation process when the information combination method is used.
 It uses the models within a mable to produce a one row summary statistics of their fits.
 }
 \examples{
+\donttest{
 library(fable)
 library(fabletools)
 library(tsibble)
@@ -36,5 +37,6 @@ fit <- tourism_gts |>
 
 fit |>
   glance()
+}
 
 }

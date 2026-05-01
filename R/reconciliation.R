@@ -49,6 +49,7 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' library(fable)
 #' library(fabletools)
 #' library(tsibble)
@@ -89,6 +90,7 @@
 #'   filter(Purpose == "Holiday", State == "Victoria") |>
 #'   autoplot(filter(tourism_gts, Purpose == "Holiday",
 #'                   State == "Victoria", year(Quarter) > 2010))
+#' }
 #'
 icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
                   standardize_response = FALSE, intercept = TRUE, lambda = NULL,
@@ -144,6 +146,7 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
 #'   `point_forecast` argument. If `bootstrap = TRUE`, point forecasts are generated using bootstrapped sample paths.
 #'
 #' @examples
+#' \donttest{
 #' library(fable)
 #' library(fabletools)
 #' library(tsibble)
@@ -160,6 +163,7 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
 #' fit |>
 #'   forecast(bootstrap = TRUE, times = 1000) |>
 #'   hilo(level = c(80, 95))
+#' }
 #'
 #' @export
 forecast.mdl_icomb_lst <- function(object, new_data = NULL, h = NULL,
