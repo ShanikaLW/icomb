@@ -5,7 +5,7 @@ Authors@R:
     c(person(given = "Shanika", 
              family = "Wickramasuriya", 
              email = "shanika.wickramasuriya@monash.edu", 
-             role = c("aut", "cre")),
+             role = c("aut", "cre", "cph")),
       person(given = "Mitchell",
              family = "O'Hara-Wild",
              role = "ctb"),
@@ -15,7 +15,11 @@ Authors@R:
       person(given = "Minh",
              family = "Nguyen",
              role = "ctb"))
-Description: Provides functions for implementing the Information Combination approach proposed by Nguyen, Vahid and Wickramasuriya (2025).
+Description: Implements the Information Combination (IComb) approach proposed by Nguyen, 
+      Vahid and Wickramasuriya (2025) for hierarchical forecast reconciliation. The method
+      combines information from base forecasts constructed using different information
+      sets while ensuring coherence. It is implemented using a penalized regression-based
+      framework.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -47,8 +51,6 @@ Suggests:
     testthat (>= 3.0.0),
     tibble,
     tidyr
-Remotes:
-    tidyverts/fabletools
 VignetteBuilder: knitr
 Depends: 
     R (>= 4.1.0)
