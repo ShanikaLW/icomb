@@ -65,6 +65,7 @@
 #' out <- cv_icomb(fitted, ally, train_size = 70)
 #' }
 #' @keywords internal
+#' @noRd
 cv_icomb <- function (fitted, actual, train_size, alpha = 1, standardize = FALSE,
                       standardize_response = FALSE, intercept = TRUE, lambda = NULL,
                       lambda_min_ratio = "expand",
