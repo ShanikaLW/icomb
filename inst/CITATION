@@ -29,8 +29,7 @@ bibentry(bibtype = "TechReport",
   type          = "Monash Econometrics and Business Statistics Working Papers",
   institution   = "Monash University, Department of Econometrics {and} Business Statistics",
   number        = "11/25",
-  year          = 2025,
-  url           = "https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf"
+  year          = 2025
 )
 
 

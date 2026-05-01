@@ -45,7 +45,7 @@
 #' @references Nguyen, M., Vahid, F., & Wickramasuriya, S. L. (2025).
 #' Hierarchical Forecasting: The Role of Information Combination (Working Paper No. 11/25).
 #' Department of Econometrics and Business Statistics, Monash University.
-#' URL: \url{https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf}
+#'
 #' @export
 #'
 #' @examples
