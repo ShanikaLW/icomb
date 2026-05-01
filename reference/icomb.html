@@ -13,7 +13,7 @@ using the rolling forecast origin cross-validation."><meta property="og:image" c
 
     <a class="navbar-brand me-2" href="../index.html">icomb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -154,7 +154,8 @@ URL: <a href="https://www.monash.edu/business/ebs/research/publications/ebs/2025
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fable.tidyverts.org" class="external-link">fable</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fable.tidyverts.org" class="external-link">fable</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fabletools.tidyverts.org/" class="external-link">fabletools</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tsibble.tidyverts.org" class="external-link">tsibble</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
@@ -205,7 +206,7 @@ URL: <a href="https://www.monash.edu/business/ebs/research/publications/ebs/2025
 <span class="r-out co"><span class="r-pr">#&gt;</span> Call:  glmnet(x = fitted[, !xconst_var], y = actual, family = "mgaussian",      alpha = alpha, lambda = lambda_subset, standardize = standardize,      intercept = intercept, thresh = thresh, maxit = maxit, standardize.response = standardize_response) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Df  %Dev  Lambda</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   0  0.00 5214000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  0.00 5214000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   1 21.44 4328000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   1 36.21 3594000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4   1 46.40 2983000</span>
@@ -723,6 +724,7 @@ URL: <a href="https://www.monash.edu/business/ebs/research/publications/ebs/2025
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tourism_gts</span>, <span class="va">Purpose</span> <span class="op">==</span> <span class="st">"Holiday"</span>,</span></span>
 <span class="r-in"><span>                  <span class="va">State</span> <span class="op">==</span> <span class="st">"Victoria"</span>, <span class="fu"><a href="https://lubridate.tidyverse.org/reference/year.html" class="external-link">year</a></span><span class="op">(</span><span class="va">Quarter</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">2010</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="icomb-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

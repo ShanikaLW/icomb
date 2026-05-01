@@ -2,9 +2,9 @@
 
 ## All functions
 
-- [`forecast(`*`<lst_icomb_mdl>`*`)`](https://shanikalw.github.io/icomb/reference/forecast.lst_icomb_mdl.md)
+- [`forecast(`*`<mdl_icomb_lst>`*`)`](https://shanikalw.github.io/icomb/reference/forecast.mdl_icomb_lst.md)
   : Produce coherent forecasts using the information combination method
-- [`glance(`*`<lst_icomb_mdl>`*`)`](https://shanikalw.github.io/icomb/reference/glance.lst_icomb_mdl.md)
+- [`glance(`*`<mdl_icomb_lst>`*`)`](https://shanikalw.github.io/icomb/reference/glance.mdl_icomb_lst.md)
   : Glance a mable which contains an information combination
   reconciliation method
 - [`icomb()`](https://shanikalw.github.io/icomb/reference/icomb.md) :

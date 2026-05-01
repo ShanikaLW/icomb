@@ -27,6 +27,7 @@ The analysis proceeds in four stages:
 ## Packages
 
 ``` r
+
 library(dplyr)
 library(tsibble)
 library(fable)
@@ -45,6 +46,7 @@ and aggregate trips across the `State` and `Purpose` dimensions to
 create a simple grouped structure.
 
 ``` r
+
 tourism_gts <- tourism |> 
   aggregate_key(State * Purpose,
                 Trips = sum(Trips))
@@ -79,6 +81,7 @@ We next fit an ETS model to every series in the grouped structure. You
 can fit any other univariate models or multivariate model(s).
 
 ``` r
+
 fit <- tourism_gts |> 
   model(base = ETS(Trips))
 fit
@@ -113,6 +116,7 @@ We reconcile the base forecasts using two methods.
   (default option)
 
 ``` r
+
 fit_recon <- fit |> 
   reconcile(
     ols = min_trace(base, method = "ols"),
@@ -147,6 +151,7 @@ results which provides `.included` variable indicating which series are
 selected by `icomb` for reconciliation.
 
 ``` r
+
 glance_output <- fit_recon |> 
   glance()
 glance_output
@@ -173,6 +178,7 @@ To describe the series in the structure statistically, we compute a
 broad collection of features using **feasts**.
 
 ``` r
+
 tourism_features <- tourism_gts |>
   features(Trips, feature_set(pkgs = "feasts"))
 tourism_features
@@ -213,6 +219,7 @@ We use principal component analysis (PCA) to obtain a low-dimensional
 representation of the features.
 
 ``` r
+
 pcs <- tourism_features |>
   select(-State, -Purpose, -zero_run_mean, -zero_start_prop, -zero_end_prop) |>
   prcomp(scale = TRUE) |>
@@ -253,6 +260,7 @@ together
 - base-model accuracy measures
 
 ``` r
+
 all_info <- glance_output |>
   filter(.model == "icomb") |>
   select(State, Purpose, .included) |>
@@ -293,6 +301,7 @@ A useful first question is whether included and excluded series occupy
 different regions of the feature space.
 
 ``` r
+
 tourism_viz <- all_info |>
   ggplot(aes(
     x = .fittedPC1,
@@ -321,6 +330,7 @@ For interactive exploration in HTML output, the plot can also be
 converted with **plotly**.
 
 ``` r
+
 tourism_viz |>
   ggplotly(tooltip = "text")
 ```
@@ -332,6 +342,7 @@ easier to interpret individual features directly. Two especially common
 summaries are trend strength and annual seasonal strength.
 
 ``` r
+
 tourism_feature_plot <- all_info |>
   ggplot(aes(
     x = trend_strength,
@@ -356,6 +367,7 @@ trended, more seasonal, or broadly similar to excluded series.
 An interactive version can also be produced
 
 ``` r
+
 tourism_feature_plot |>
   ggplotly(tooltip = "text")
 ```
@@ -367,6 +379,7 @@ travel purpose. To explore this, we facet the trend-seasonality display
 by `Purpose`.
 
 ``` r
+
 tourism_purpose_plot <- all_info |>
   ggplot(aes(
     x = trend_strength,
@@ -386,6 +399,7 @@ tourism_purpose_plot
 An interactive version can also be produced when desired.
 
 ``` r
+
 tourism_purpose_plot |>
   ggplotly(text = "text")
 ```
@@ -429,6 +443,7 @@ by aggregating using [`mean()`](https://rdrr.io/r/base/mean.html)
 instead of [`sum()`](https://rdrr.io/r/base/sum.html).
 
 ``` r
+
 tourism_avg_gts <- tourism_gts |>
   filter(!is_aggregated(State), !is_aggregated(Purpose)) |>
   aggregate_key(State * Purpose,
@@ -438,6 +453,7 @@ tourism_avg_gts <- tourism_gts |>
 We then fit and reconcile forecasts in the usual way.
 
 ``` r
+
 fc <- tourism_avg_gts |>
   model(base = ETS(Trips)) |>
   reconcile(icomb = icomb(base, train_size = 55)) |>
@@ -449,6 +465,7 @@ the averages from the bottom-level forecasts and compare them with the
 reconciled values.
 
 ``` r
+
 fc |>
   filter(!is_aggregated(State), !is_aggregated(Purpose), .model == "icomb") |>
   aggregate_key(State * Purpose,
@@ -458,7 +475,7 @@ fc |>
   pull(diff) |>
   range()
 #> Joining with `by = join_by(Quarter, State, Purpose)`
-#> [1] -4.547474e-13  9.094947e-13
+#> [1] -6.821210e-13  9.094947e-13
 ```
 
 The range of differences is close to zero.
