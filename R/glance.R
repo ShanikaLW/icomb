@@ -38,7 +38,7 @@ node_present <- function(x) {
 #'
 #' @export
 #' @importFrom dplyr mutate
-glance.lst_icomb_mdl <- function(x, ...) {
+glance.mdl_icomb_lst <- function(x, ...) {
   map(x, glance, ...) |>
     map2(node_present(x),
          ~mutate(.x, .included = .y))

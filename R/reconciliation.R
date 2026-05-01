@@ -108,7 +108,7 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
                         nlambda = nlambda, maxit = maxit, thresh = thresh)
 
   # return a 'global' model which is icomb coherent
-  structure(models, class = c("lst_icomb_mdl", "lst_mdl", "list"),
+  structure(models, class = c("mdl_icomb_lst", "mdl_lst", "list"),
             alpha = alpha, standardize = standardize, standardize_response = standardize_response,
             intercept = intercept, lambda = lambda, lambda_min_ratio = lambda_min_ratio,
             nlambda = nlambda, maxit = maxit, thresh = thresh, icombfit = icomb_fit, exact = exact)
@@ -162,7 +162,7 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
 #'   hilo(level = c(80, 95))
 #'
 #' @export
-forecast.lst_icomb_mdl <- function(object, new_data = NULL, h = NULL,
+forecast.mdl_icomb_lst <- function(object, new_data = NULL, h = NULL,
                                    point_forecast = list(.mean = mean), ...){
 
   fc <- NextMethod()
