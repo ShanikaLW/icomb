@@ -50,7 +50,7 @@ fit
 #> # A mable: 45 x 5
 #> # Key:     State, Purpose [45]
 #>    State           Purpose              base ols          icomb       
-#>    <chr*>          <chr*>            <model> <model>      <mdl_cmb_>  
+#>    <chr*>          <chr*>            <model> <model>      <model>     
 #>  1 ACT             Business     <ETS(M,N,M)> <ETS(M,N,M)> <ETS(M,N,M)>
 #>  2 ACT             Holiday      <ETS(M,N,A)> <ETS(M,N,A)> <ETS(M,N,A)>
 #>  3 ACT             Other        <ETS(M,N,N)> <ETS(M,N,N)> <ETS(M,N,N)>
@@ -105,8 +105,8 @@ tourism_hts |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75))  |>  
   forecast(h = "3 years") 
-#> # A fable: 1,080 x 6 [1Q]
-#> # Key:     State, Purpose, .model [90]
+#> # A fable: 1,620 x 6 [1Q]
+#> # Key:     State, Purpose, .model [135]
 #>    State  Purpose  .model Quarter
 #>    <chr*> <chr*>   <chr>    <qtr>
 #>  1 ACT    Business base   2018 Q1
@@ -119,7 +119,7 @@ tourism_hts |>
 #>  8 ACT    Business base   2019 Q4
 #>  9 ACT    Business base   2020 Q1
 #> 10 ACT    Business base   2020 Q2
-#> # ℹ 1,070 more rows
+#> # ℹ 1,610 more rows
 #> # ℹ 2 more variables: Trips <dist>, .mean <dbl>
 plan(sequential)
 ```

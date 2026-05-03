@@ -98,7 +98,7 @@
 <span><span class="co">#&gt; # A mable: 45 x 5</span></span>
 <span><span class="co">#&gt; # Key:     State, Purpose [45]</span></span>
 <span><span class="co">#&gt;    State           Purpose              base ols          icomb       </span></span>
-<span><span class="co">#&gt;    &lt;chr*&gt;          &lt;chr*&gt;            &lt;model&gt; &lt;model&gt;      &lt;mdl_cmb_&gt;  </span></span>
+<span><span class="co">#&gt;    &lt;chr*&gt;          &lt;chr*&gt;            &lt;model&gt; &lt;model&gt;      &lt;model&gt;     </span></span>
 <span><span class="co">#&gt;  1 ACT             Business     &lt;ETS(M,N,M)&gt; &lt;ETS(M,N,M)&gt; &lt;ETS(M,N,M)&gt;</span></span>
 <span><span class="co">#&gt;  2 ACT             Holiday      &lt;ETS(M,N,A)&gt; &lt;ETS(M,N,A)&gt; &lt;ETS(M,N,A)&gt;</span></span>
 <span><span class="co">#&gt;  3 ACT             Other        &lt;ETS(M,N,N)&gt; &lt;ETS(M,N,N)&gt; &lt;ETS(M,N,N)&gt;</span></span>
@@ -134,8 +134,8 @@
 <span>  <span class="fu"><a href="https://fabletools.tidyverts.org/reference/reconcile.html" class="external-link">reconcile</a></span><span class="op">(</span>ols <span class="op">=</span> <span class="fu"><a href="https://fabletools.tidyverts.org/reference/min_trace.html" class="external-link">min_trace</a></span><span class="op">(</span><span class="va">base</span>, method <span class="op">=</span> <span class="st">"ols"</span><span class="op">)</span>,</span>
 <span>            icomb <span class="op">=</span> <span class="fu"><a href="reference/icomb.html">icomb</a></span><span class="op">(</span><span class="va">base</span>, train_size <span class="op">=</span> <span class="fl">75</span><span class="op">)</span><span class="op">)</span>  <span class="op">|&gt;</span>  </span>
 <span>  <span class="fu"><a href="https://generics.r-lib.org/reference/forecast.html" class="external-link">forecast</a></span><span class="op">(</span>h <span class="op">=</span> <span class="st">"3 years"</span><span class="op">)</span> </span>
-<span><span class="co">#&gt; # A fable: 1,080 x 6 [1Q]</span></span>
-<span><span class="co">#&gt; # Key:     State, Purpose, .model [90]</span></span>
+<span><span class="co">#&gt; # A fable: 1,620 x 6 [1Q]</span></span>
+<span><span class="co">#&gt; # Key:     State, Purpose, .model [135]</span></span>
 <span><span class="co">#&gt;    State  Purpose  .model Quarter</span></span>
 <span><span class="co">#&gt;    &lt;chr*&gt; &lt;chr*&gt;   &lt;chr&gt;    &lt;qtr&gt;</span></span>
 <span><span class="co">#&gt;  1 ACT    Business base   2018 Q1</span></span>
@@ -148,7 +148,7 @@
 <span><span class="co">#&gt;  8 ACT    Business base   2019 Q4</span></span>
 <span><span class="co">#&gt;  9 ACT    Business base   2020 Q1</span></span>
 <span><span class="co">#&gt; 10 ACT    Business base   2020 Q2</span></span>
-<span><span class="co">#&gt; # ℹ 1,070 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 1,610 more rows</span></span>
 <span><span class="co">#&gt; # ℹ 2 more variables: Trips &lt;dist&gt;, .mean &lt;dbl&gt;</span></span>
 <span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">sequential</span><span class="op">)</span></span></code></pre></div>
 </div>
