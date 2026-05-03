@@ -28,7 +28,7 @@ Imports:
     cli,
     distributional,
     dplyr,
-    fabletools,
+    fabletools (>= 0.7.0),
     future.apply,
     generics,
     glmnet,
