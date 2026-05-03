@@ -102,7 +102,7 @@ fit
 #> # ℹ 35 more rows
 ```
 
-These are the base forecasts. Since each series is modelled
+These are the base forecasts. Since each series is modeled
 independently, the forecasts are not guaranteed to be coherent with the
 aggregation constraints.
 
@@ -146,7 +146,7 @@ included in the information combination process.
 
 ### Inspecting reconciliation output
 
-To investigate the behaviour of `icomb`, we glance the reconciliation
+To investigate the behavior of `icomb`, we glance the reconciliation
 results which provides `.included` variable indicating which series are
 selected by `icomb` for reconciliation.
 
@@ -211,7 +211,7 @@ Practice](https://otexts.com/fpp3/features.html) textbook for a detailed
 description of these features.
 
 Rather than inspecting dozens of features one at a time, it is often
-useful to summarise them in a smaller feature space.
+useful to summarize them in a smaller feature space.
 
 ### Reducing the feature space with PCA
 
@@ -252,7 +252,7 @@ variation across the extracted series features.
 
 ### Joining features, node inclusion, and accuracy
 
-To compare statistical features with reconciliation behaviour, we join
+To compare statistical features with reconciliation behavior, we join
 together
 
 - the PCA representation
@@ -372,7 +372,7 @@ tourism_feature_plot |>
   ggplotly(tooltip = "text")
 ```
 
-### Comparing behaviour across travel purpose
+### Comparing behavior across travel purpose
 
 The relationship between structure and inclusion of series may differ by
 travel purpose. To explore this, we facet the trend-seasonality display
@@ -475,7 +475,7 @@ fc |>
   pull(diff) |>
   range()
 #> Joining with `by = join_by(Quarter, State, Purpose)`
-#> [1] -6.821210e-13  9.094947e-13
+#> [1] -4.547474e-13  9.094947e-13
 ```
 
 The range of differences is close to zero.

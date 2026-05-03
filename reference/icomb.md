@@ -179,7 +179,7 @@ fit |>
 #> Call:  glmnet(x = fitted[, !xconst_var], y = actual, family = "mgaussian",      alpha = alpha, lambda = lambda_subset, standardize = standardize,      intercept = intercept, thresh = thresh, maxit = maxit, standardize.response = standardize_response) 
 #> 
 #>    Df  %Dev  Lambda
-#> 1   1  0.00 5214000
+#> 1   0  0.00 5214000
 #> 2   1 21.44 4328000
 #> 3   1 36.21 3594000
 #> 4   1 46.40 2983000
