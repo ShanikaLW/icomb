@@ -53,6 +53,7 @@ tourism_gts <- tourism |>
 tourism_gts
 #> # A tsibble: 3,600 x 4 [1Q]
 #> # Key:       State, Purpose [45]
+#> Loading required namespace: crayon
 #>    Quarter State        Purpose       Trips
 #>      <qtr> <chr*>       <chr*>        <dbl>
 #>  1 1998 Q1 <aggregated> <aggregated> 23182.
@@ -155,20 +156,20 @@ glance_output <- fit_recon |>
   glance()
 glance_output
 #> # A tibble: 135 × 12
-#>    State  Purpose  .model sigma2 log_lik   AIC  AICc   BIC   MSE  AMSE   MAE
-#>    <chr*> <chr*>   <chr>   <dbl>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>  1 ACT    Business base   0.0540   -453.  919.  921.  936. 1069. 1071. 0.186
-#>  2 ACT    Business ols    0.0540   -453.  919.  921.  936. 1069. 1071. 0.186
-#>  3 ACT    Business icomb  0.0540   -453.  919.  921.  936. 1069. 1071. 0.186
-#>  4 ACT    Holiday  base   0.0680   -463.  940.  941.  956. 1509. 1538. 0.189
-#>  5 ACT    Holiday  ols    0.0680   -463.  940.  941.  956. 1509. 1538. 0.189
-#>  6 ACT    Holiday  icomb  0.0680   -463.  940.  941.  956. 1509. 1538. 0.189
-#>  7 ACT    Other    base   0.202    -376.  759.  759.  766.  154.  156. 0.366
-#>  8 ACT    Other    ols    0.202    -376.  759.  759.  766.  154.  156. 0.366
-#>  9 ACT    Other    icomb  0.202    -376.  759.  759.  766.  154.  156. 0.366
-#> 10 ACT    Visiting base   0.0305   -450.  905.  905.  912.  965. 1038. 0.128
+#>    State  Purpose  .model sigma2 log_lik   AIC  AICc   BIC   MSE  AMSE
+#>    <chr*> <chr*>   <chr>   <dbl>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#>  1 ACT    Business base   0.0540   -453.  919.  921.  936. 1069. 1071.
+#>  2 ACT    Business ols    0.0540   -453.  919.  921.  936. 1069. 1071.
+#>  3 ACT    Business icomb  0.0540   -453.  919.  921.  936. 1069. 1071.
+#>  4 ACT    Holiday  base   0.0680   -463.  940.  941.  956. 1509. 1538.
+#>  5 ACT    Holiday  ols    0.0680   -463.  940.  941.  956. 1509. 1538.
+#>  6 ACT    Holiday  icomb  0.0680   -463.  940.  941.  956. 1509. 1538.
+#>  7 ACT    Other    base   0.202    -376.  759.  759.  766.  154.  156.
+#>  8 ACT    Other    ols    0.202    -376.  759.  759.  766.  154.  156.
+#>  9 ACT    Other    icomb  0.202    -376.  759.  759.  766.  154.  156.
+#> 10 ACT    Visiting base   0.0305   -450.  905.  905.  912.  965. 1038.
 #> # ℹ 125 more rows
-#> # ℹ 1 more variable: .included <lgl>
+#> # ℹ 2 more variables: MAE <dbl>, .included <lgl>
 ```
 
 ### Computing time series features
@@ -182,25 +183,25 @@ tourism_features <- tourism_gts |>
   features(Trips, feature_set(pkgs = "feasts"))
 tourism_features
 #> # A tibble: 45 × 50
-#>    State           Purpose      trend_strength seasonal_strength_year seasonal_peak_year
-#>    <chr*>          <chr*>                <dbl>                  <dbl>              <dbl>
-#>  1 ACT             Business              0.526                  0.405                  2
-#>  2 ACT             Holiday               0.603                  0.453                  1
-#>  3 ACT             Other                 0.502                  0.254                  1
-#>  4 ACT             Visiting              0.600                  0.136                  0
-#>  5 ACT             <aggregated>          0.725                  0.184                  2
-#>  6 New South Wales Business              0.785                  0.635                  3
-#>  7 New South Wales Holiday               0.750                  0.891                  1
-#>  8 New South Wales Other                 0.874                  0.303                  2
-#>  9 New South Wales Visiting              0.831                  0.733                  1
-#> 10 New South Wales <aggregated>          0.908                  0.760                  1
+#>    State           Purpose      trend_strength seasonal_strength_year
+#>    <chr*>          <chr*>                <dbl>                  <dbl>
+#>  1 ACT             Business              0.526                  0.405
+#>  2 ACT             Holiday               0.603                  0.453
+#>  3 ACT             Other                 0.502                  0.254
+#>  4 ACT             Visiting              0.600                  0.136
+#>  5 ACT             <aggregated>          0.725                  0.184
+#>  6 New South Wales Business              0.785                  0.635
+#>  7 New South Wales Holiday               0.750                  0.891
+#>  8 New South Wales Other                 0.874                  0.303
+#>  9 New South Wales Visiting              0.831                  0.733
+#> 10 New South Wales <aggregated>          0.908                  0.760
 #> # ℹ 35 more rows
-#> # ℹ 45 more variables: seasonal_trough_year <dbl>, spikiness <dbl>, linearity <dbl>,
-#> #   curvature <dbl>, stl_e_acf1 <dbl>, stl_e_acf10 <dbl>, acf1 <dbl>, acf10 <dbl>,
-#> #   diff1_acf1 <dbl>, diff1_acf10 <dbl>, diff2_acf1 <dbl>, diff2_acf10 <dbl>,
-#> #   season_acf1 <dbl>, pacf5 <dbl>, diff1_pacf5 <dbl>, diff2_pacf5 <dbl>,
-#> #   season_pacf <dbl>, zero_run_mean <dbl>, nonzero_squared_cv <dbl>,
-#> #   zero_start_prop <dbl>, zero_end_prop <dbl>, lambda_guerrero <dbl>, …
+#> # ℹ 46 more variables: seasonal_peak_year <dbl>, seasonal_trough_year <dbl>,
+#> #   spikiness <dbl>, linearity <dbl>, curvature <dbl>, stl_e_acf1 <dbl>,
+#> #   stl_e_acf10 <dbl>, acf1 <dbl>, acf10 <dbl>, diff1_acf1 <dbl>,
+#> #   diff1_acf10 <dbl>, diff2_acf1 <dbl>, diff2_acf10 <dbl>, season_acf1 <dbl>,
+#> #   pacf5 <dbl>, diff1_pacf5 <dbl>, diff2_pacf5 <dbl>, season_pacf <dbl>,
+#> #   zero_run_mean <dbl>, nonzero_squared_cv <dbl>, zero_start_prop <dbl>, …
 ```
 
 These features capture properties such as trend strength, seasonal
@@ -240,10 +241,10 @@ pcs
 #> # ℹ 35 more rows
 #> # ℹ 91 more variables: seasonal_peak_year <dbl>, seasonal_trough_year <dbl>,
 #> #   spikiness <dbl>, linearity <dbl>, curvature <dbl>, stl_e_acf1 <dbl>,
-#> #   stl_e_acf10 <dbl>, acf1 <dbl>, acf10 <dbl>, diff1_acf1 <dbl>, diff1_acf10 <dbl>,
-#> #   diff2_acf1 <dbl>, diff2_acf10 <dbl>, season_acf1 <dbl>, pacf5 <dbl>,
-#> #   diff1_pacf5 <dbl>, diff2_pacf5 <dbl>, season_pacf <dbl>, zero_run_mean <dbl>,
-#> #   nonzero_squared_cv <dbl>, zero_start_prop <dbl>, zero_end_prop <dbl>, …
+#> #   stl_e_acf10 <dbl>, acf1 <dbl>, acf10 <dbl>, diff1_acf1 <dbl>,
+#> #   diff1_acf10 <dbl>, diff2_acf1 <dbl>, diff2_acf10 <dbl>, season_acf1 <dbl>,
+#> #   pacf5 <dbl>, diff1_pacf5 <dbl>, diff2_pacf5 <dbl>, season_pacf <dbl>,
+#> #   zero_run_mean <dbl>, nonzero_squared_cv <dbl>, zero_start_prop <dbl>, …
 ```
 
 The coordinates `.fittedPC1` and `.fittedPC2` summarize the dominant
@@ -270,25 +271,25 @@ all_info <- accuracy(fit) |>
   full_join(all_info, by = c("State", "Purpose"))
 all_info
 #> # A tibble: 45 × 105
-#>    State      Purpose       ME  RMSE   MAE      MPE  MAPE  MASE RMSSE     ACF1 .included
-#>    <chr*>     <chr*>     <dbl> <dbl> <dbl>    <dbl> <dbl> <dbl> <dbl>    <dbl> <lgl>    
-#>  1 ACT      … Business    4.90  32.7  26.7  -1.52   18.6  0.703 0.739  0.0312  FALSE    
-#>  2 ACT      … Holiday     3.63  38.9  28.5  -2.00   18.6  0.839 0.842  0.110   FALSE    
-#>  3 ACT      … Other       1.32  12.4  10.2 -16.0    42.6  0.789 0.773  0.0614  FALSE    
-#>  4 ACT      … Visiting    3.28  31.1  23.2  -0.622  12.2  0.684 0.704  0.0737  FALSE    
-#>  5 ACT      … <aggregat…  7.91  60.9  49.0   0.0964  9.75 0.709 0.697  0.0913  FALSE    
-#>  6 New South… Business    9.69 128.  102.   -0.0675  8.10 0.785 0.789 -0.0967  FALSE    
-#>  7 New South… Holiday     8.36 168.  136.   -0.0168  4.56 0.805 0.785  0.00534 FALSE    
-#>  8 New South… Other       5.91  41.4  34.9   0.0551 12.1  0.851 0.828 -0.0737  FALSE    
-#>  9 New South… Visiting   13.9  151.  124.    0.202   5.21 0.696 0.699  0.0391  FALSE    
-#> 10 New South… <aggregat… 32.6  300.  243.    0.268   3.53 0.731 0.725 -0.0306  TRUE     
+#>    State        Purpose       ME  RMSE   MAE      MPE  MAPE  MASE RMSSE     ACF1
+#>    <chr*>       <chr*>     <dbl> <dbl> <dbl>    <dbl> <dbl> <dbl> <dbl>    <dbl>
+#>  1 ACT        … Business    4.90  32.7  26.7  -1.52   18.6  0.703 0.739  0.0312 
+#>  2 ACT        … Holiday     3.63  38.9  28.5  -2.00   18.6  0.839 0.842  0.110  
+#>  3 ACT        … Other       1.32  12.4  10.2 -16.0    42.6  0.789 0.773  0.0614 
+#>  4 ACT        … Visiting    3.28  31.1  23.2  -0.622  12.2  0.684 0.704  0.0737 
+#>  5 ACT        … <aggregat…  7.91  60.9  49.0   0.0964  9.75 0.709 0.697  0.0913 
+#>  6 New South W… Business    9.69 128.  102.   -0.0675  8.10 0.785 0.789 -0.0967 
+#>  7 New South W… Holiday     8.36 168.  136.   -0.0168  4.56 0.805 0.785  0.00534
+#>  8 New South W… Other       5.91  41.4  34.9   0.0551 12.1  0.851 0.828 -0.0737 
+#>  9 New South W… Visiting   13.9  151.  124.    0.202   5.21 0.696 0.699  0.0391 
+#> 10 New South W… <aggregat… 32.6  300.  243.    0.268   3.53 0.731 0.725 -0.0306 
 #> # ℹ 35 more rows
-#> # ℹ 94 more variables: .rownames <chr>, trend_strength <dbl>,
-#> #   seasonal_strength_year <dbl>, seasonal_peak_year <dbl>, seasonal_trough_year <dbl>,
-#> #   spikiness <dbl>, linearity <dbl>, curvature <dbl>, stl_e_acf1 <dbl>,
-#> #   stl_e_acf10 <dbl>, acf1 <dbl>, acf10 <dbl>, diff1_acf1 <dbl>, diff1_acf10 <dbl>,
-#> #   diff2_acf1 <dbl>, diff2_acf10 <dbl>, season_acf1 <dbl>, pacf5 <dbl>,
-#> #   diff1_pacf5 <dbl>, diff2_pacf5 <dbl>, season_pacf <dbl>, zero_run_mean <dbl>, …
+#> # ℹ 95 more variables: .included <lgl>, .rownames <chr>, trend_strength <dbl>,
+#> #   seasonal_strength_year <dbl>, seasonal_peak_year <dbl>,
+#> #   seasonal_trough_year <dbl>, spikiness <dbl>, linearity <dbl>,
+#> #   curvature <dbl>, stl_e_acf1 <dbl>, stl_e_acf10 <dbl>, acf1 <dbl>,
+#> #   acf10 <dbl>, diff1_acf1 <dbl>, diff1_acf10 <dbl>, diff2_acf1 <dbl>,
+#> #   diff2_acf10 <dbl>, season_acf1 <dbl>, pacf5 <dbl>, diff1_pacf5 <dbl>, …
 ```
 
 This gives a single data frame linking each series to its features,
@@ -320,9 +321,7 @@ tourism_viz <- all_info |>
 tourism_viz
 ```
 
-![plot of chunk unnamed-chunk-9](unnamed-chunk-9-1.png)
-
-plot of chunk unnamed-chunk-9
+![](icomb-interactive_files/figure-html/unnamed-chunk-9-1.png)
 
 This plot provides a compact view of whether series inclusion in `icomb`
 is associated with the broad statistical profile of a series.
@@ -360,9 +359,7 @@ tourism_feature_plot <- all_info |>
 tourism_feature_plot
 ```
 
-![plot of chunk unnamed-chunk-11](unnamed-chunk-11-1.png)
-
-plot of chunk unnamed-chunk-11
+![](icomb-interactive_files/figure-html/unnamed-chunk-11-1.png)
 
 This plot helps assess whether included series tend to be more strongly
 trended, more seasonal, or broadly similar to excluded series.
@@ -397,9 +394,7 @@ tourism_purpose_plot <- all_info |>
 tourism_purpose_plot
 ```
 
-![plot of chunk unnamed-chunk-13](unnamed-chunk-13-1.png)
-
-plot of chunk unnamed-chunk-13
+![](icomb-interactive_files/figure-html/unnamed-chunk-13-1.png)
 
 An interactive version can also be produced when desired.
 

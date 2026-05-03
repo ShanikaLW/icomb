@@ -2,8 +2,9 @@ pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
+  icomb-interactive: icomb-interactive.html
   icomb: icomb.html
-last_built: 2026-05-03T10:40Z
+last_built: 2026-05-03T14:04Z
 urls:
   reference: https://shanikalw.github.io/icomb/reference
   article: https://shanikalw.github.io/icomb/articles
