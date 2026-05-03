@@ -16,13 +16,13 @@ Source:
 [`inst/CITATION`](https://github.com/ShanikaLW/icomb/blob/master/inst/CITATION)
 
 Wickramasuriya SL (2026). *icomb: orecasting Hierarchical Time Series
-Using Information Combination*. R package version 0.1.0.
+Using Information Combination*. R package version 0.1.1.
 
     @Manual{,
       title = {{icomb}: orecasting Hierarchical Time Series Using Information Combination},
       author = {Shanika L Wickramasuriya},
       year = {2026},
-      note = {R package version 0.1.0},
+      note = {R package version 0.1.1},
     }
 
 Nguyen M, Vahid F, Wickramasuriya SL (2025). “Hierarchical Forecasting:
