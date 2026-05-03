@@ -7,15 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.width = 7,
-  fig.height = 7,
-  fig.path = ""
-)
-```
+
 
 # Introduction
 
@@ -35,7 +27,8 @@ The analysis proceeds in four stages:
 
 # Packages
 
-```{r setup, message=FALSE}
+
+``` r
 library(dplyr)
 library(tsibble)
 library(fable)
@@ -51,11 +44,27 @@ library(plotly)
 
 We begin with the `tourism` dataset available in the `tsibble` package and aggregate trips across the `State` and `Purpose` dimensions to create a simple grouped structure.
 
-```{r}
+
+``` r
 tourism_gts <- tourism |>
   aggregate_key(State * Purpose,
                 Trips = sum(Trips))
 tourism_gts
+#> # A tsibble: 3,600 x 4 [1Q]
+#> # Key:       State, Purpose [45]
+#>    Quarter State        Purpose       Trips
+#>      <qtr> <chr*>       <chr*>        <dbl>
+#>  1 1998 Q1 <aggregated> <aggregated> 23182.
+#>  2 1998 Q2 <aggregated> <aggregated> 20323.
+#>  3 1998 Q3 <aggregated> <aggregated> 19827.
+#>  4 1998 Q4 <aggregated> <aggregated> 20830.
+#>  5 1999 Q1 <aggregated> <aggregated> 22087.
+#>  6 1999 Q2 <aggregated> <aggregated> 21458.
+#>  7 1999 Q3 <aggregated> <aggregated> 19914.
+#>  8 1999 Q4 <aggregated> <aggregated> 20028.
+#>  9 2000 Q1 <aggregated> <aggregated> 22339.
+#> 10 2000 Q2 <aggregated> <aggregated> 19941.
+#> # ℹ 3,590 more rows
 ```
 
 This grouped structure contains the total, the marginal aggregates (i.e., state level aggregates and purpose level aggregates), and the bottom-level series defined by each `State` and `Purpose` combination. These connected series form a natural setting for forecast reconciliation.
@@ -64,10 +73,26 @@ This grouped structure contains the total, the marginal aggregates (i.e., state 
 
 We next fit an ETS model to every series in the grouped structure. You can fit any other univariate models or multivariate model(s).
 
-```{r}
+
+``` r
 fit <- tourism_gts |>
   model(base = ETS(Trips))
 fit
+#> # A mable: 45 x 3
+#> # Key:     State, Purpose [45]
+#>    State           Purpose              base
+#>    <chr*>          <chr*>            <model>
+#>  1 ACT             Business     <ETS(M,N,M)>
+#>  2 ACT             Holiday      <ETS(M,N,A)>
+#>  3 ACT             Other        <ETS(M,N,N)>
+#>  4 ACT             Visiting     <ETS(M,N,N)>
+#>  5 ACT             <aggregated> <ETS(M,A,N)>
+#>  6 New South Wales Business     <ETS(M,N,A)>
+#>  7 New South Wales Holiday      <ETS(M,N,A)>
+#>  8 New South Wales Other        <ETS(A,N,N)>
+#>  9 New South Wales Visiting     <ETS(A,N,A)>
+#> 10 New South Wales <aggregated> <ETS(A,N,A)>
+#> # ℹ 35 more rows
 ```
 
 These are the base forecasts. Since each series is modelled independently, the forecasts are not guaranteed to be coherent with the aggregation constraints.
@@ -80,13 +105,29 @@ We reconcile the base forecasts using two methods.
 
 - `icomb`: the `icomb` reconciliation method with group lasso penalty (default option)
 
-```{r}
+
+``` r
 fit_recon <- fit |>
   reconcile(
     ols = min_trace(base, method = "ols"),
     icomb = icomb(base, train_size = 55)
   )
 fit_recon
+#> # A mable: 45 x 5
+#> # Key:     State, Purpose [45]
+#>    State           Purpose              base ols          icomb       
+#>    <chr*>          <chr*>            <model> <model>      <model>     
+#>  1 ACT             Business     <ETS(M,N,M)> <ETS(M,N,M)> <ETS(M,N,M)>
+#>  2 ACT             Holiday      <ETS(M,N,A)> <ETS(M,N,A)> <ETS(M,N,A)>
+#>  3 ACT             Other        <ETS(M,N,N)> <ETS(M,N,N)> <ETS(M,N,N)>
+#>  4 ACT             Visiting     <ETS(M,N,N)> <ETS(M,N,N)> <ETS(M,N,N)>
+#>  5 ACT             <aggregated> <ETS(M,A,N)> <ETS(M,A,N)> <ETS(M,A,N)>
+#>  6 New South Wales Business     <ETS(M,N,A)> <ETS(M,N,A)> <ETS(M,N,A)>
+#>  7 New South Wales Holiday      <ETS(M,N,A)> <ETS(M,N,A)> <ETS(M,N,A)>
+#>  8 New South Wales Other        <ETS(A,N,N)> <ETS(A,N,N)> <ETS(A,N,N)>
+#>  9 New South Wales Visiting     <ETS(A,N,A)> <ETS(A,N,A)> <ETS(A,N,A)>
+#> 10 New South Wales <aggregated> <ETS(A,N,A)> <ETS(A,N,A)> <ETS(A,N,A)>
+#> # ℹ 35 more rows
 ```
 
 The `icomb` method with group lasso penalty is especially useful for exploratory analysis because it allows us to study which series are included in the information combination process.
@@ -95,20 +136,57 @@ The `icomb` method with group lasso penalty is especially useful for exploratory
 
 To investigate the behaviour of `icomb`, we glance the reconciliation results which provides `.included` variable indicating which series are selected by `icomb` for reconciliation.
 
-```{r}
+
+``` r
 glance_output <- fit_recon |>
   glance()
 glance_output
+#> # A tibble: 135 × 12
+#>    State  Purpose  .model sigma2 log_lik   AIC  AICc   BIC   MSE  AMSE   MAE
+#>    <chr*> <chr*>   <chr>   <dbl>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#>  1 ACT    Business base   0.0540   -453.  919.  921.  936. 1069. 1071. 0.186
+#>  2 ACT    Business ols    0.0540   -453.  919.  921.  936. 1069. 1071. 0.186
+#>  3 ACT    Business icomb  0.0540   -453.  919.  921.  936. 1069. 1071. 0.186
+#>  4 ACT    Holiday  base   0.0680   -463.  940.  941.  956. 1509. 1538. 0.189
+#>  5 ACT    Holiday  ols    0.0680   -463.  940.  941.  956. 1509. 1538. 0.189
+#>  6 ACT    Holiday  icomb  0.0680   -463.  940.  941.  956. 1509. 1538. 0.189
+#>  7 ACT    Other    base   0.202    -376.  759.  759.  766.  154.  156. 0.366
+#>  8 ACT    Other    ols    0.202    -376.  759.  759.  766.  154.  156. 0.366
+#>  9 ACT    Other    icomb  0.202    -376.  759.  759.  766.  154.  156. 0.366
+#> 10 ACT    Visiting base   0.0305   -450.  905.  905.  912.  965. 1038. 0.128
+#> # ℹ 125 more rows
+#> # ℹ 1 more variable: .included <lgl>
 ```
 
 ## Computing time series features
 
 To describe the series in the structure statistically, we compute a broad collection of features using **feasts**.
 
-```{r}
+
+``` r
 tourism_features <- tourism_gts |>
   features(Trips, feature_set(pkgs = "feasts"))
 tourism_features
+#> # A tibble: 45 × 50
+#>    State           Purpose      trend_strength seasonal_strength_year seasonal_peak_year
+#>    <chr*>          <chr*>                <dbl>                  <dbl>              <dbl>
+#>  1 ACT             Business              0.526                  0.405                  2
+#>  2 ACT             Holiday               0.603                  0.453                  1
+#>  3 ACT             Other                 0.502                  0.254                  1
+#>  4 ACT             Visiting              0.600                  0.136                  0
+#>  5 ACT             <aggregated>          0.725                  0.184                  2
+#>  6 New South Wales Business              0.785                  0.635                  3
+#>  7 New South Wales Holiday               0.750                  0.891                  1
+#>  8 New South Wales Other                 0.874                  0.303                  2
+#>  9 New South Wales Visiting              0.831                  0.733                  1
+#> 10 New South Wales <aggregated>          0.908                  0.760                  1
+#> # ℹ 35 more rows
+#> # ℹ 45 more variables: seasonal_trough_year <dbl>, spikiness <dbl>, linearity <dbl>,
+#> #   curvature <dbl>, stl_e_acf1 <dbl>, stl_e_acf10 <dbl>, acf1 <dbl>, acf10 <dbl>,
+#> #   diff1_acf1 <dbl>, diff1_acf10 <dbl>, diff2_acf1 <dbl>, diff2_acf10 <dbl>,
+#> #   season_acf1 <dbl>, pacf5 <dbl>, diff1_pacf5 <dbl>, diff2_pacf5 <dbl>,
+#> #   season_pacf <dbl>, zero_run_mean <dbl>, nonzero_squared_cv <dbl>,
+#> #   zero_start_prop <dbl>, zero_end_prop <dbl>, lambda_guerrero <dbl>, …
 ```
 
 These features capture properties such as trend strength, seasonal strength, autocorrelation, linearity, and aspects of forecastability. See the online [Forecasting: Principles and Practice](https://otexts.com/fpp3/features.html) textbook for a detailed description of these features.
@@ -119,12 +197,33 @@ Rather than inspecting dozens of features one at a time, it is often useful to s
 
 We use principal component analysis (PCA) to obtain a low-dimensional representation of the features.
 
-```{r}
+
+``` r
 pcs <- tourism_features |>
   select(-State, -Purpose, -zero_run_mean, -zero_start_prop, -zero_end_prop) |>
   prcomp(scale = TRUE) |>
   broom::augment(tourism_features)
 pcs
+#> # A tibble: 45 × 96
+#>    .rownames State           Purpose      trend_strength seasonal_strength_year
+#>    <chr>     <chr*>          <chr*>                <dbl>                  <dbl>
+#>  1 1         ACT             Business              0.526                  0.405
+#>  2 2         ACT             Holiday               0.603                  0.453
+#>  3 3         ACT             Other                 0.502                  0.254
+#>  4 4         ACT             Visiting              0.600                  0.136
+#>  5 5         ACT             <aggregated>          0.725                  0.184
+#>  6 6         New South Wales Business              0.785                  0.635
+#>  7 7         New South Wales Holiday               0.750                  0.891
+#>  8 8         New South Wales Other                 0.874                  0.303
+#>  9 9         New South Wales Visiting              0.831                  0.733
+#> 10 10        New South Wales <aggregated>          0.908                  0.760
+#> # ℹ 35 more rows
+#> # ℹ 91 more variables: seasonal_peak_year <dbl>, seasonal_trough_year <dbl>,
+#> #   spikiness <dbl>, linearity <dbl>, curvature <dbl>, stl_e_acf1 <dbl>,
+#> #   stl_e_acf10 <dbl>, acf1 <dbl>, acf10 <dbl>, diff1_acf1 <dbl>, diff1_acf10 <dbl>,
+#> #   diff2_acf1 <dbl>, diff2_acf10 <dbl>, season_acf1 <dbl>, pacf5 <dbl>,
+#> #   diff1_pacf5 <dbl>, diff2_pacf5 <dbl>, season_pacf <dbl>, zero_run_mean <dbl>,
+#> #   nonzero_squared_cv <dbl>, zero_start_prop <dbl>, zero_end_prop <dbl>, …
 ```
 
 
@@ -138,7 +237,8 @@ To compare statistical features with reconciliation behaviour, we join together
 - the node inclusion indicator from `icomb`, and
 - base-model accuracy measures
 
-```{r}
+
+``` r
 all_info <- glance_output |>
   filter(.model == "icomb") |>
   select(State, Purpose, .included) |>
@@ -148,6 +248,26 @@ all_info <- accuracy(fit) |>
   select(-.model, -.type) |>
   full_join(all_info, by = c("State", "Purpose"))
 all_info
+#> # A tibble: 45 × 105
+#>    State      Purpose       ME  RMSE   MAE      MPE  MAPE  MASE RMSSE     ACF1 .included
+#>    <chr*>     <chr*>     <dbl> <dbl> <dbl>    <dbl> <dbl> <dbl> <dbl>    <dbl> <lgl>    
+#>  1 ACT      … Business    4.90  32.7  26.7  -1.52   18.6  0.703 0.739  0.0312  FALSE    
+#>  2 ACT      … Holiday     3.63  38.9  28.5  -2.00   18.6  0.839 0.842  0.110   FALSE    
+#>  3 ACT      … Other       1.32  12.4  10.2 -16.0    42.6  0.789 0.773  0.0614  FALSE    
+#>  4 ACT      … Visiting    3.28  31.1  23.2  -0.622  12.2  0.684 0.704  0.0737  FALSE    
+#>  5 ACT      … <aggregat…  7.91  60.9  49.0   0.0964  9.75 0.709 0.697  0.0913  FALSE    
+#>  6 New South… Business    9.69 128.  102.   -0.0675  8.10 0.785 0.789 -0.0967  FALSE    
+#>  7 New South… Holiday     8.36 168.  136.   -0.0168  4.56 0.805 0.785  0.00534 FALSE    
+#>  8 New South… Other       5.91  41.4  34.9   0.0551 12.1  0.851 0.828 -0.0737  FALSE    
+#>  9 New South… Visiting   13.9  151.  124.    0.202   5.21 0.696 0.699  0.0391  FALSE    
+#> 10 New South… <aggregat… 32.6  300.  243.    0.268   3.53 0.731 0.725 -0.0306  TRUE     
+#> # ℹ 35 more rows
+#> # ℹ 94 more variables: .rownames <chr>, trend_strength <dbl>,
+#> #   seasonal_strength_year <dbl>, seasonal_peak_year <dbl>, seasonal_trough_year <dbl>,
+#> #   spikiness <dbl>, linearity <dbl>, curvature <dbl>, stl_e_acf1 <dbl>,
+#> #   stl_e_acf10 <dbl>, acf1 <dbl>, acf10 <dbl>, diff1_acf1 <dbl>, diff1_acf10 <dbl>,
+#> #   diff2_acf1 <dbl>, diff2_acf10 <dbl>, season_acf1 <dbl>, pacf5 <dbl>,
+#> #   diff1_pacf5 <dbl>, diff2_pacf5 <dbl>, season_pacf <dbl>, zero_run_mean <dbl>, …
 ```
 
 This gives a single data frame linking each series to its features, inclusion status, and forecast accuracy metrics.
@@ -156,7 +276,8 @@ This gives a single data frame linking each series to its features, inclusion st
 
 A useful first question is whether included and excluded series occupy different regions of the feature space.
 
-```{r}
+
+``` r
 tourism_viz <- all_info |>
   ggplot(aes(
     x = .fittedPC1,
@@ -176,11 +297,14 @@ tourism_viz <- all_info |>
 tourism_viz
 ```
 
+![plot of chunk unnamed-chunk-9](unnamed-chunk-9-1.png)
+
 This plot provides a compact view of whether series inclusion in `icomb` is associated with the broad statistical profile of a series.
 
 For interactive exploration in HTML output, the plot can also be converted with **plotly**.
 
-```{r, eval=FALSE}
+
+``` r
 tourism_viz |>
   ggplotly(tooltip = "text")
 ```
@@ -190,7 +314,8 @@ tourism_viz |>
 
 While PCA is useful for summarizing many features at once, it is often easier to interpret individual features directly. Two especially common summaries are trend strength and annual seasonal strength.
 
-```{r}
+
+``` r
 tourism_feature_plot <- all_info |>
   ggplot(aes(
     x = trend_strength,
@@ -207,11 +332,14 @@ tourism_feature_plot <- all_info |>
 tourism_feature_plot
 ```
 
+![plot of chunk unnamed-chunk-11](unnamed-chunk-11-1.png)
+
 This plot helps assess whether included series tend to be more strongly trended, more seasonal, or broadly similar to excluded series.
 
 An interactive version can also be produced
 
-```{r, eval=FALSE}
+
+``` r
 tourism_feature_plot |>
   ggplotly(tooltip = "text")
 ```
@@ -221,7 +349,8 @@ tourism_feature_plot |>
 
 The relationship between structure and inclusion of series may differ by travel purpose. To explore this, we facet the trend-seasonality display by `Purpose`.
 
-```{r}
+
+``` r
 tourism_purpose_plot <- all_info |>
   ggplot(aes(
     x = trend_strength,
@@ -236,9 +365,12 @@ tourism_purpose_plot <- all_info |>
 tourism_purpose_plot
 ```
 
+![plot of chunk unnamed-chunk-13](unnamed-chunk-13-1.png)
+
 An interactive version can also be produced when desired.
 
-```{r, eval=FALSE}
+
+``` r
 tourism_purpose_plot |>
   ggplotly(text = "text")
 ```
@@ -267,7 +399,8 @@ At present, the `min_trace()` implementation in **fabletools** is restricted to 
 
 As an illustration, suppose the structure is defined in terms of *averages* rather than totals. We can construct such a grouped structure by aggregating using `mean()` instead of `sum()`.
 
-```{r}
+
+``` r
 tourism_avg_gts <- tourism_gts |>
   filter(!is_aggregated(State), !is_aggregated(Purpose)) |>
   aggregate_key(State * Purpose,
@@ -276,7 +409,8 @@ tourism_avg_gts <- tourism_gts |>
 
 We then fit and reconcile forecasts in the usual way.
 
-```{r}
+
+``` r
 fc <- tourism_avg_gts |>
   model(base = ETS(Trips)) |>
   reconcile(icomb = icomb(base, train_size = 55)) |>
@@ -285,7 +419,8 @@ fc <- tourism_avg_gts |>
 
 To verify coherence under this alternative structure, we can recompute the averages from the bottom-level forecasts and compare them with the reconciled values.
 
-```{r}
+
+``` r
 fc |>
   filter(!is_aggregated(State), !is_aggregated(Purpose), .model == "icomb") |>
   aggregate_key(State * Purpose,
@@ -294,6 +429,8 @@ fc |>
   mutate(diff = mean_fc - .mean) |>
   pull(diff) |>
   range()
+#> Joining with `by = join_by(Quarter, State, Purpose)`
+#> [1] -6.821210e-13  9.094947e-13
 ```
 The range of differences is close to zero.
 

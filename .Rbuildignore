@@ -11,3 +11,9 @@
 ^hex$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+
+^vignettes-raw$
+rebuild-long-running-vignettes.R
+^vignettes/icomb-interactive\.Rmd$
+^vignettes/icomb-interactive_files$
+^vignettes/icomb-interactive\.html$

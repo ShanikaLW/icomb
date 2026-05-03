@@ -13,7 +13,7 @@ navbar:
   - text: Reference
     href: reference/index.html
   - text: Vignettes
-    href: articles/icomb.html
+    href: articles/icomb-interactive.html
   - text: Manuscript
     href: https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf
   - text: Changelog
