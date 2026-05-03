@@ -1,0 +1,308 @@
+---
+title: "icomb"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{icomb}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 7
+)
+```
+
+# Introduction
+
+Forecast reconciliation is used to make forecasts coherent across a hierarchy or grouped structure. In the Australian tourism data, trips can be aggregated by `State`, by `Purpose`, and by their combinations. If forecasts are produced independently for each series, the results will generally not add up correctly across the structure.
+
+This vignette demonstrates a workflow that goes a step further than reconciliation alone. Alongside coherent forecasts, we also examine which series are selected by `icomb`, and whether those series exhibit distinctive time series characteristics.
+
+The analysis proceeds in four stages:
+
+1. construct a grouped tourism structure
+
+2. fit base forecast models and reconcile the forecasts
+
+3. extract series inclusion information from `icomb`
+
+4. relate inclusion of series to feature-based summaries or accuracy of the series.
+
+# Packages
+
+```{r setup, message=FALSE}
+library(dplyr)
+library(tsibble)
+library(fable)
+library(icomb)
+library(feasts)
+library(ggplot2)
+library(plotly)
+```
+
+# Workflow
+
+## Building a grouped tourism structure
+
+We begin with the `tourism` dataset available in the `tsibble` package and aggregate trips across the `State` and `Purpose` dimensions to create a simple grouped structure.
+
+```{r}
+tourism_gts <- tourism |>
+  aggregate_key(State * Purpose,
+                Trips = sum(Trips))
+tourism_gts
+```
+
+This grouped structure contains the total, the marginal aggregates (i.e., state level aggregates and purpose level aggregates), and the bottom-level series defined by each `State` and `Purpose` combination. These connected series form a natural setting for forecast reconciliation.
+
+## Fitting base forecasts
+
+We next fit an ETS model to every series in the grouped structure. You can fit any other univariate models or multivariate model(s).
+
+```{r}
+fit <- tourism_gts |>
+  model(base = ETS(Trips))
+fit
+```
+
+These are the base forecasts. Since each series is modelled independently, the forecasts are not guaranteed to be coherent with the aggregation constraints.
+
+## Reconciling base forecasts
+
+We reconcile the base forecasts using two methods.
+
+- `ols`: MinT reconciliation with $\mathbf{W}_h \propto \mathbf{I}$
+
+- `icomb`: the `icomb` reconciliation method with group lasso penalty (default option)
+
+```{r}
+fit_recon <- fit |>
+  reconcile(
+    ols = min_trace(base, method = "ols"),
+    icomb = icomb(base, train_size = 55)
+  )
+fit_recon
+```
+
+The `icomb` method with group lasso penalty is especially useful for exploratory analysis because it allows us to study which series are included in the information combination process.
+
+## Inspecting reconciliation output
+
+To investigate the behaviour of `icomb`, we glance the reconciliation results which provides `.included` variable indicating which series are selected by `icomb` for reconciliation.
+
+```{r}
+glance_output <- fit_recon |>
+  glance()
+glance_output
+```
+
+## Computing time series features
+
+To describe the series in the structure statistically, we compute a broad collection of features using **feasts**.
+
+```{r}
+tourism_features <- tourism_gts |>
+  features(Trips, feature_set(pkgs = "feasts"))
+tourism_features
+```
+
+These features capture properties such as trend strength, seasonal strength, autocorrelation, linearity, and aspects of forecastability. See the online [Forecasting: Principles and Practice](https://otexts.com/fpp3/features.html) textbook for a detailed description of these features.
+
+Rather than inspecting dozens of features one at a time, it is often useful to summarise them in a smaller feature space.
+
+## Reducing the feature space with PCA
+
+We use principal component analysis (PCA) to obtain a low-dimensional representation of the features.
+
+```{r}
+pcs <- tourism_features |>
+  select(-State, -Purpose, -zero_run_mean, -zero_start_prop, -zero_end_prop) |>
+  prcomp(scale = TRUE) |>
+  broom::augment(tourism_features)
+pcs
+```
+
+
+The coordinates `.fittedPC1` and `.fittedPC2` summarize the dominant variation across the extracted series features.
+
+## Joining features, node inclusion, and accuracy
+
+To compare statistical features with reconciliation behaviour, we join together
+
+- the PCA representation
+- the node inclusion indicator from `icomb`, and
+- base-model accuracy measures
+
+```{r}
+all_info <- glance_output |>
+  filter(.model == "icomb") |>
+  select(State, Purpose, .included) |>
+  full_join(pcs, by = c("State", "Purpose"))
+
+all_info <- accuracy(fit) |>
+  select(-.model, -.type) |>
+  full_join(all_info, by = c("State", "Purpose"))
+all_info
+```
+
+This gives a single data frame linking each series to its features, inclusion status, and forecast accuracy metrics.
+
+## Visualizing series inclusion in feature space
+
+A useful first question is whether included and excluded series occupy different regions of the feature space.
+
+```{r}
+tourism_viz <- all_info |>
+  ggplot(aes(
+    x = .fittedPC1,
+    y = .fittedPC2,
+    colour = .included,
+    text = paste0(
+      "PC1: ", round(.fittedPC1, 2), "<br>",
+      "PC2: ", round(.fittedPC2, 2), "<br>",
+      "State: ", State, "<br>",
+      "Purpose: ", Purpose, "<br>",
+      "MAPE: ", round(MAPE, 2), "<br>",
+      "RMSSE: ", round(RMSSE, 2), "<br>",
+      "MASE: ", round(MASE, 2)
+    )
+  )) +
+  geom_point()
+tourism_viz
+```
+
+This plot provides a compact view of whether series inclusion in `icomb` is associated with the broad statistical profile of a series.
+
+For interactive exploration in HTML output, the plot can also be converted with **plotly**.
+
+```{r}
+tourism_viz |>
+  ggplotly(tooltip = "text")
+```
+
+
+## Examining interpretable features directly
+
+While PCA is useful for summarizing many features at once, it is often easier to interpret individual features directly. Two especially common summaries are trend strength and annual seasonal strength.
+
+```{r}
+tourism_feature_plot <- all_info |>
+  ggplot(aes(
+    x = trend_strength,
+    y = seasonal_strength_year,
+    colour = .included,
+    text = paste0(
+      "Trend_strength: ", round(trend_strength, 2), "<br>",
+      "Seasonal_strength_year: ", round(seasonal_strength_year, 2), "<br>",
+      "State: ", State, "<br>",
+      "Purpose: ", Purpose, "<br>"
+    )
+  )) +
+  geom_point()
+tourism_feature_plot
+```
+
+This plot helps assess whether included series tend to be more strongly trended, more seasonal, or broadly similar to excluded series.
+
+An interactive version can also be produced
+
+```{r}
+tourism_feature_plot |>
+  ggplotly(tooltip = "text")
+```
+
+
+## Comparing behaviour across travel purpose
+
+The relationship between structure and inclusion of series may differ by travel purpose. To explore this, we facet the trend-seasonality display by `Purpose`.
+
+```{r}
+tourism_purpose_plot <- all_info |>
+  ggplot(aes(
+    x = trend_strength,
+    y = seasonal_strength_year,
+    colour = .included,
+    text = paste0(
+      "State: ", State, "<br>",
+      "Purpose: ", Purpose, "<br>")
+  )) +
+  geom_point() +
+  facet_wrap(vars(Purpose))
+tourism_purpose_plot
+```
+
+An interactive version can also be produced when desired.
+
+```{r}
+tourism_purpose_plot |>
+  ggplotly(text = "text")
+```
+
+## Interpreting the results
+
+This workflow makes it possible to ask questions such as:
+
+- Do included series tend to be more regular or more forecastable?
+
+- Are highly seasonal series more likely to be selected by `icomb`?
+
+- Is inclusion associated with stronger or weaker base forecast accuracy?
+
+- Do patterns differ systematically across purpose groups?
+
+The answers will depend on the data and the implementation details of `icomb`, but the framework provides a practical way to connect reconciliation output with interpretable series characteristics.
+
+# Beyond summing constraints
+
+The reconciliation methods discussed above are not limited to simple summation constraints. In general, both MinT based approaches and information combination methods can accommodate any *linear* constraints across a system of time series.
+
+At present, the `min_trace()` implementation in **fabletools** is restricted to summing constraints. The `icomb()` approach, however, is more flexible and can be used in settings where the aggregation structure is defined differently.
+
+## Using averages instead of sums
+
+As an illustration, suppose the structure is defined in terms of *averages* rather than totals. We can construct such a grouped structure by aggregating using `mean()` instead of `sum()`.
+
+```{r}
+tourism_avg_gts <- tourism_gts |>
+  filter(!is_aggregated(State), !is_aggregated(Purpose)) |>
+  aggregate_key(State * Purpose,
+                Trips = mean(Trips))
+```
+
+We then fit and reconcile forecasts in the usual way.
+
+```{r}
+fc <- tourism_avg_gts |>
+  model(base = ETS(Trips)) |>
+  reconcile(icomb = icomb(base, train_size = 55)) |>
+  forecast()
+```
+
+To verify coherence under this alternative structure, we can recompute the averages from the bottom-level forecasts and compare them with the reconciled values.
+
+```{r}
+fc |>
+  filter(!is_aggregated(State), !is_aggregated(Purpose), .model == "icomb") |>
+  aggregate_key(State * Purpose,
+                mean_fc = mean(.mean)) |>
+  full_join(fc |> filter(.model == "icomb")) |>
+  mutate(diff = mean_fc - .mean) |>
+  pull(diff) |>
+  range()
+```
+The range of differences is close to zero.
+
+## Current limitations and extensions
+
+The current implementation of `aggregate_key()` in **fabletools** does not yet support arbitrary weights, which limits direct construction of more general linear constraints. This is expected to be addressed in future releases.
+
+In the meantime, for fully general linear constraints, a practical approach is to manually construct a `tsibble` containing all series in the desired structure and pass it directly to `model()`. This provides complete flexibility in defining relationships among the series.
+
+
+
+
+
