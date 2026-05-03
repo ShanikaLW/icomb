@@ -29,7 +29,6 @@ Nguyen M, Vahid F, Wickramasuriya SL (2025). “Hierarchical Forecasting:
 The Role of Information.” Monash Econometrics and Business Statistics
 Working Papers 11/25, Monash University, Department of Econometrics and
 Business Statistics.
-<https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf>.
 
     @TechReport{,
       title = {Hierarchical Forecasting: The Role of Information},
@@ -38,5 +37,4 @@ Business Statistics.
       institution = {Monash University, Department of Econometrics {and} Business Statistics},
       number = {11/25},
       year = {2025},
-      url = {https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf},
     }
