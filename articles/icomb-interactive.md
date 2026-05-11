@@ -122,6 +122,12 @@ fit_recon <- fit |>
     ols = min_trace(base, method = "ols"),
     icomb = icomb(base, train_size = 55)
   )
+#> Warning: There were 2 warnings in `mutate()`.
+#> The first warning was:
+#> ℹ In argument: `icomb = icomb(base, train_size = 55)`.
+#> Caused by warning in `.resolve_control()`:
+#> ! Passing 'thresh' to glmnet() is deprecated. Use control = list(thresh = ...) instead.
+#> ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.
 fit_recon
 #> # A mable: 45 x 5
 #> # Key:     State, Purpose [45]
@@ -475,7 +481,7 @@ fc |>
   pull(diff) |>
   range()
 #> Joining with `by = join_by(Quarter, State, Purpose)`
-#> [1] -4.547474e-13  9.094947e-13
+#> [1] -6.821210e-13  9.094947e-13
 ```
 
 The range of differences is close to zero.

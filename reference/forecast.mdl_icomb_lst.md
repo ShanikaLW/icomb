@@ -89,6 +89,12 @@ fit <- tourism_gts |>
   model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75))
+#> Warning: There were 2 warnings in `mutate()`.
+#> The first warning was:
+#> ℹ In argument: `icomb = icomb(base, train_size = 75)`.
+#> Caused by warning in `.resolve_control()`:
+#> ! Passing 'thresh' to glmnet() is deprecated. Use control = list(thresh = ...) instead.
+#> ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.
 fit |>
   forecast(bootstrap = TRUE, times = 1000) |>
   hilo(level = c(80, 95))

@@ -179,7 +179,7 @@ fit |>
 #> Call:  glmnet(x = fitted[, !xconst_var], y = actual, family = "mgaussian",      alpha = alpha, lambda = lambda_subset, standardize = standardize,      intercept = intercept, thresh = thresh, maxit = maxit, standardize.response = standardize_response) 
 #> 
 #>    Df  %Dev  Lambda
-#> 1   0  0.00 5214000
+#> 1   1  0.00 5214000
 #> 2   1 21.44 4328000
 #> 3   1 36.21 3594000
 #> 4   1 46.40 2983000
@@ -672,6 +672,12 @@ tourism_gts |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75)) |>
   forecast(h = "3 years")
+#> Warning: There were 4 warnings in `mutate()`.
+#> The first warning was:
+#> ℹ In argument: `icomb = icomb(base, train_size = 75)`.
+#> Caused by warning in `.resolve_control()`:
+#> ! Passing 'thresh' to glmnet() is deprecated. Use control = list(thresh = ...) instead.
+#> ℹ Run `dplyr::last_dplyr_warnings()` to see the 3 remaining warnings.
 #> # A fable: 1,620 x 6 [1Q]
 #> # Key:     State, Purpose, .model [135]
 #>    State  Purpose  .model Quarter
