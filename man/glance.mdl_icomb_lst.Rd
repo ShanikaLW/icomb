@@ -27,7 +27,7 @@ library(tsibble)
 library(dplyr)
 
 tourism_hts <- tourism |>
-  aggregate_key(Purpose,
+  aggregate_key(State,
                 Trips = sum(Trips))
 
 fit <- tourism_hts |>

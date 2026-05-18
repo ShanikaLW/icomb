@@ -103,6 +103,7 @@ fit |>
   autoplot(filter(tourism_hts,
                   State == "Victoria", year(Quarter) > 2010))
 
+# grouped structure
 tourism_gts <- tourism |>
   aggregate_key(State * Purpose,
                 Trips = sum(Trips))
