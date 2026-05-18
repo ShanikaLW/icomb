@@ -16,7 +16,7 @@ Authors@R:
              family = "Nguyen",
              role = "ctb"))
 Description: Implements the Information Combination (IComb) approach proposed by Nguyen, 
-      Vahid and Wickramasuriya (2025) for hierarchical forecast reconciliation. The method
+      Vahid and Wickramasuriya (2025)<https://www.monash.edu/business/ebs/research/publications/ebs/2025/wp11-2025.pdf> for hierarchical forecast reconciliation. The method
       combines information from base forecasts constructed using different information
       sets while ensuring coherence. It is implemented using a penalized regression-based
       framework.
