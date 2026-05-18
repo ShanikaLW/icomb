@@ -481,7 +481,7 @@ fc |>
   pull(diff) |>
   range()
 #> Joining with `by = join_by(Quarter, State, Purpose)`
-#> [1] -6.821210e-13  9.094947e-13
+#> [1] -4.547474e-13  9.094947e-13
 ```
 
 The range of differences is close to zero.

@@ -31,7 +31,7 @@ information combination method is used.
 ## Examples
 
 ``` r
-# \donttest{
+
 library(fable)
 library(fabletools)
 library(tsibble)
@@ -45,31 +45,30 @@ library(dplyr)
 #> 
 #>     intersect, setdiff, setequal, union
 
-tourism_gts <- tourism |>
-  aggregate_key(State * Purpose,
+tourism_hts <- tourism |>
+  aggregate_key(State,
                 Trips = sum(Trips))
 
-fit <- tourism_gts |>
+fit <- tourism_hts |>
   model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75))
 
 fit |>
   glance()
-#> # A tibble: 135 × 12
-#>    State  Purpose  .model sigma2 log_lik   AIC  AICc   BIC   MSE  AMSE
-#>    <chr*> <chr*>   <chr>   <dbl>   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-#>  1 ACT    Business base   0.0540   -453.  919.  921.  936. 1069. 1071.
-#>  2 ACT    Business ols    0.0540   -453.  919.  921.  936. 1069. 1071.
-#>  3 ACT    Business icomb  0.0540   -453.  919.  921.  936. 1069. 1071.
-#>  4 ACT    Holiday  base   0.0680   -463.  940.  941.  956. 1509. 1538.
-#>  5 ACT    Holiday  ols    0.0680   -463.  940.  941.  956. 1509. 1538.
-#>  6 ACT    Holiday  icomb  0.0680   -463.  940.  941.  956. 1509. 1538.
-#>  7 ACT    Other    base   0.202    -376.  759.  759.  766.  154.  156.
-#>  8 ACT    Other    ols    0.202    -376.  759.  759.  766.  154.  156.
-#>  9 ACT    Other    icomb  0.202    -376.  759.  759.  766.  154.  156.
-#> 10 ACT    Visiting base   0.0305   -450.  905.  905.  912.  965. 1038.
-#> # ℹ 125 more rows
-#> # ℹ 2 more variables: MAE <dbl>, .included <lgl>
-# }
+#> # A tibble: 27 × 11
+#>    State          .model  sigma2 log_lik   AIC  AICc   BIC    MSE   AMSE     MAE
+#>    <chr*>         <chr>    <dbl>   <dbl> <dbl> <dbl> <dbl>  <dbl>  <dbl>   <dbl>
+#>  1 ACT          … base   1.56e-2   -504. 1019. 1020. 1031.  3704. 3.75e3 9.78e-2
+#>  2 ACT          … ols    1.56e-2   -504. 1019. 1020. 1031.  3704. 3.75e3 9.78e-2
+#>  3 ACT          … icomb  1.56e-2   -504. 1019. 1020. 1031.  3704. 3.75e3 9.78e-2
+#>  4 New South Wal… base   9.70e+4   -631. 1277. 1278. 1294. 89711. 1.09e5 2.43e+2
+#>  5 New South Wal… ols    9.70e+4   -631. 1277. 1278. 1294. 89711. 1.09e5 2.43e+2
+#>  6 New South Wal… icomb  9.70e+4   -631. 1277. 1278. 1294. 89711. 1.09e5 2.43e+2
+#>  7 Northern Terr… base   2.77e-2   -492.  999. 1000. 1016.  3327. 3.78e3 1.17e-1
+#>  8 Northern Terr… ols    2.77e-2   -492.  999. 1000. 1016.  3327. 3.78e3 1.17e-1
+#>  9 Northern Terr… icomb  2.77e-2   -492.  999. 1000. 1016.  3327. 3.78e3 1.17e-1
+#> 10 Queensland   … base   9.81e+4   -632. 1278. 1279. 1294. 90738. 9.98e4 2.37e+2
+#> # ℹ 17 more rows
+#> # ℹ 1 more variable: .included <lgl>
 ```
