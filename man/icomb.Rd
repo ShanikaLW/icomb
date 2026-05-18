@@ -70,13 +70,38 @@ using the rolling forecast origin cross-validation.
 Missing values are removed prior to applying the information combination method.
 }
 \examples{
-\donttest{
+
 library(fable)
 library(fabletools)
 library(tsibble)
 library(dplyr)
 library(lubridate)
 library(ggtime)
+
+tourism_hts <- tourism |>
+  aggregate_key(State,
+                Trips = sum(Trips))
+
+fit <- tourism_hts |>
+  model(base = ETS(Trips)) |>
+  reconcile(ols = min_trace(base, method = "ols"),
+            icomb = icomb(base, train_size = 75))
+
+fit |>
+  forecast(h = "3 years")
+
+# extracting results from icomb cross-validation
+fit |>
+  pull(icomb) |>
+  attr("icombfit")
+
+\donttest{
+# Extracting probabilistic forecasts
+fit |>
+  forecast(h = "3 years", bootstrap = TRUE, times = 1000) |>
+  filter(State == "Victoria") |>
+  autoplot(filter(tourism_hts,
+                  State == "Victoria", year(Quarter) > 2010))
 
 tourism_gts <- tourism |>
   aggregate_key(State * Purpose,
@@ -86,13 +111,6 @@ fit <- tourism_gts |>
   model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75))
-fit |>
-  forecast(h = "3 years")
-
-# extracting results from cross-validation
-fit |>
-  pull(icomb) |>
-  attr("icombfit")
 
 # Parallelizing cross-validation
 library(future)
@@ -105,12 +123,6 @@ tourism_gts |>
   forecast(h = "3 years")
 plan(sequential)
 
-# Extracting probabilistic forecasts
-fit |>
-  forecast(h = "3 years", bootstrap = TRUE, times = 1000) |>
-  filter(Purpose == "Holiday", State == "Victoria") |>
-  autoplot(filter(tourism_gts, Purpose == "Holiday",
-                  State == "Victoria", year(Quarter) > 2010))
 }
 
 }
