@@ -68,6 +68,11 @@ using the rolling forecast origin cross-validation.
 }
 \note{
 Missing values are removed prior to applying the information combination method.
+
+The default value of \code{lambda_min_ratio} may result in very small values of \eqn{\lambda}, which can increase computation time. It is
+therefore recommended to choose this parameter according to the specific requirements of your application.
+
+parameter depending on your application.
 }
 \examples{
 
