@@ -33,6 +33,11 @@
 #'
 #' @note Missing values are removed prior to applying the information combination method.
 #'
+#' The default value of `lambda_min_ratio` may result in very small values of \eqn{\lambda}, which can increase computation time. It is
+#' therefore recommended to choose this parameter according to the specific requirements of your application.
+#'
+#' parameter depending on your application.
+#'
 #' @seealso [`reconcile()`], [`aggregate_key()`]
 #' @importFrom tsibble index_var interval
 #' @importFrom purrr map map2 exec reduce map_chr
@@ -159,20 +164,22 @@ icomb <- function(models, train_size, alpha = 1, standardize = FALSE,
 #'   `point_forecast` argument. If `bootstrap = TRUE`, point forecasts are generated using bootstrapped sample paths.
 #'
 #' @examples
-#' \donttest{
+#'
 #' library(fable)
 #' library(fabletools)
 #' library(tsibble)
 #' library(distributional)
 #'
-#' tourism_gts <- tourism |>
-#'   aggregate_key(State * Purpose,
+#' tourism_hts <- tourism |>
+#'   aggregate_key(State,
 #'                 Trips = sum(Trips))
 #'
-#' fit <- tourism_gts |>
+#' fit <- tourism_hts |>
 #'   model(base = ETS(Trips)) |>
 #'   reconcile(ols = min_trace(base, method = "ols"),
 #'             icomb = icomb(base, train_size = 75))
+#'
+#' \donttest{
 #' fit |>
 #'   forecast(bootstrap = TRUE, times = 1000) |>
 #'   hilo(level = c(80, 95))
