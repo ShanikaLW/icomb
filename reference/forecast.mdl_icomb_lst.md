@@ -69,7 +69,7 @@ class, to extract the numerical upper and lower bounds you can use
 ## Examples
 
 ``` r
-# \donttest{
+
 library(fable)
 #> Loading required package: fabletools
 library(fabletools)
@@ -81,11 +81,11 @@ library(tsibble)
 #>     intersect, setdiff, union
 library(distributional)
 
-tourism_gts <- tourism |>
-  aggregate_key(State * Purpose,
+tourism_hts <- tourism |>
+  aggregate_key(State,
                 Trips = sum(Trips))
 
-fit <- tourism_gts |>
+fit <- tourism_hts |>
   model(base = ETS(Trips)) |>
   reconcile(ols = min_trace(base, method = "ols"),
             icomb = icomb(base, train_size = 75))
@@ -95,25 +95,27 @@ fit <- tourism_gts |>
 #> Caused by warning in `.resolve_control()`:
 #> ! Passing 'thresh' to glmnet() is deprecated. Use control = list(thresh = ...) instead.
 #> ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.
+
+# \donttest{
 fit |>
   forecast(bootstrap = TRUE, times = 1000) |>
   hilo(level = c(80, 95))
-#> # A tsibble: 1,080 x 8 [1Q]
-#> # Key:       State, Purpose, .model [135]
+#> # A tsibble: 216 x 7 [1Q]
+#> # Key:       State, .model [27]
 #> Loading required namespace: crayon
-#>    State  Purpose  .model Quarter        Trips .mean
-#>    <chr*> <chr*>   <chr>    <qtr>       <dist> <dbl>
-#>  1 ACT    Business base   2018 Q1 sample[1000]  145.
-#>  2 ACT    Business base   2018 Q2 sample[1000]  203.
-#>  3 ACT    Business base   2018 Q3 sample[1000]  197.
-#>  4 ACT    Business base   2018 Q4 sample[1000]  191.
-#>  5 ACT    Business base   2019 Q1 sample[1000]  142.
-#>  6 ACT    Business base   2019 Q2 sample[1000]  204.
-#>  7 ACT    Business base   2019 Q3 sample[1000]  197.
-#>  8 ACT    Business base   2019 Q4 sample[1000]  189.
-#>  9 ACT    Business ols    2018 Q1 sample[1000]  173.
-#> 10 ACT    Business ols    2018 Q2 sample[1000]  237.
-#> # ℹ 1,070 more rows
-#> # ℹ 2 more variables: `80%` <hilo>, `95%` <hilo>
+#>    State  .model Quarter        Trips .mean                  `80%`
+#>    <chr*> <chr>    <qtr>       <dist> <dbl>                 <hilo>
+#>  1 ACT    base   2018 Q1 sample[1000]  703. [599.5647, 813.1174]80
+#>  2 ACT    base   2018 Q2 sample[1000]  720. [609.7173, 835.1879]80
+#>  3 ACT    base   2018 Q3 sample[1000]  737. [621.1969, 859.2365]80
+#>  4 ACT    base   2018 Q4 sample[1000]  753. [638.0372, 869.9488]80
+#>  5 ACT    base   2019 Q1 sample[1000]  765. [642.7770, 890.6511]80
+#>  6 ACT    base   2019 Q2 sample[1000]  789. [667.6355, 908.2969]80
+#>  7 ACT    base   2019 Q3 sample[1000]  802. [675.2354, 934.7294]80
+#>  8 ACT    base   2019 Q4 sample[1000]  813. [679.5546, 943.1796]80
+#>  9 ACT    ols    2018 Q1 sample[1000]  714. [537.2034, 887.3422]80
+#> 10 ACT    ols    2018 Q2 sample[1000]  814. [629.9566, 991.8888]80
+#> # ℹ 206 more rows
+#> # ℹ 1 more variable: `95%` <hilo>
 # }
 ```

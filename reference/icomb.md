@@ -108,6 +108,13 @@ A 'global' model which is icomb coherent
 Missing values are removed prior to applying the information combination
 method.
 
+The default value of `lambda_min_ratio` may result in very small values
+of \\\lambda\\, which can increase computation time. It is therefore
+recommended to choose this parameter according to the specific
+requirements of your application.
+
+parameter depending on your application.
+
 ## References
 
 Nguyen, M., Vahid, F., & Wickramasuriya, S. L. (2025). Hierarchical
@@ -180,7 +187,7 @@ fit |>
 #> Call:  glmnet(x = fitted[, !xconst_var], y = actual, family = "mgaussian",      alpha = alpha, lambda = lambda_subset, standardize = standardize,      intercept = intercept, thresh = thresh, maxit = maxit, standardize.response = standardize_response) 
 #> 
 #>    Df  %Dev  Lambda
-#> 1   1  0.00 4531000
+#> 1   0  0.00 4531000
 #> 2   1 24.92 3762000
 #> 3   1 42.10 3123000
 #> 4   1 53.94 2593000

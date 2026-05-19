@@ -95,7 +95,7 @@ extract the numerical upper and lower bounds you can use <code><a href="https://
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fable.tidyverts.org" class="external-link">fable</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: fabletools</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fabletools.tidyverts.org/" class="external-link">fabletools</a></span><span class="op">)</span></span></span>
@@ -107,11 +107,11 @@ extract the numerical upper and lower bounds you can use <code><a href="https://
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     intersect, setdiff, union</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/distributional/" class="external-link">distributional</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tourism_gts</span> <span class="op">&lt;-</span> <span class="va">tourism</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://fabletools.tidyverts.org/reference/aggregate_key.html" class="external-link">aggregate_key</a></span><span class="op">(</span><span class="va">State</span> <span class="op">*</span> <span class="va">Purpose</span>,</span></span>
+<span class="r-in"><span><span class="va">tourism_hts</span> <span class="op">&lt;-</span> <span class="va">tourism</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://fabletools.tidyverts.org/reference/aggregate_key.html" class="external-link">aggregate_key</a></span><span class="op">(</span><span class="va">State</span>,</span></span>
 <span class="r-in"><span>                Trips <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">Trips</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="va">tourism_gts</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="va">tourism_hts</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://fabletools.tidyverts.org/reference/model.html" class="external-link">model</a></span><span class="op">(</span>base <span class="op">=</span> <span class="fu"><a href="https://fable.tidyverts.org/reference/ETS.html" class="external-link">ETS</a></span><span class="op">(</span><span class="va">Trips</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://fabletools.tidyverts.org/reference/reconcile.html" class="external-link">reconcile</a></span><span class="op">(</span>ols <span class="op">=</span> <span class="fu"><a href="https://fabletools.tidyverts.org/reference/min_trace.html" class="external-link">min_trace</a></span><span class="op">(</span><span class="va">base</span>, method <span class="op">=</span> <span class="st">"ols"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>            icomb <span class="op">=</span> <span class="fu"><a href="icomb.html">icomb</a></span><span class="op">(</span><span class="va">base</span>, train_size <span class="op">=</span> <span class="fl">75</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -121,26 +121,28 @@ extract the numerical upper and lower bounds you can use <code><a href="https://
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Caused by warning in `.resolve_control()`:</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Passing 'thresh' to glmnet() is deprecated. Use control = list(thresh = ...) instead.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://generics.r-lib.org/reference/forecast.html" class="external-link">forecast</a></span><span class="op">(</span>bootstrap <span class="op">=</span> <span class="cn">TRUE</span>, times <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://pkg.mitchelloharawild.com/distributional/reference/hilo.html" class="external-link">hilo</a></span><span class="op">(</span>level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">80</span>, <span class="fl">95</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tsibble: 1,080 x 8 [1Q]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Key:       State, Purpose, .model [135]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tsibble: 216 x 7 [1Q]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Key:       State, .model [27]</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required namespace: crayon</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    State  Purpose  .model Quarter        Trips .mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr*&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr*&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;qtr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dist&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ACT    Business base   2018 Q1 sample[1000]  145.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ACT    Business base   2018 Q2 sample[1000]  203.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ACT    Business base   2018 Q3 sample[1000]  197.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ACT    Business base   2018 Q4 sample[1000]  191.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ACT    Business base   2019 Q1 sample[1000]  142.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ACT    Business base   2019 Q2 sample[1000]  204.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ACT    Business base   2019 Q3 sample[1000]  197.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ACT    Business base   2019 Q4 sample[1000]  189.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ACT    Business ols    2018 Q1 sample[1000]  173.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ACT    Business ols    2018 Q2 sample[1000]  237.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1,070 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 2 more variables: `80%` &lt;hilo&gt;, `95%` &lt;hilo&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    State  .model Quarter        Trips .mean                  `80%`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr*&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;qtr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dist&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;hilo&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ACT    base   2018 Q1 sample[1000]  703. [599.5647, 813.1174]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ACT    base   2018 Q2 sample[1000]  720. [609.7173, 835.1879]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ACT    base   2018 Q3 sample[1000]  737. [621.1969, 859.2365]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ACT    base   2018 Q4 sample[1000]  753. [638.0372, 869.9488]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ACT    base   2019 Q1 sample[1000]  765. [642.7770, 890.6511]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ACT    base   2019 Q2 sample[1000]  789. [667.6355, 908.2969]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ACT    base   2019 Q3 sample[1000]  802. [675.2354, 934.7294]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ACT    base   2019 Q4 sample[1000]  813. [679.5546, 943.1796]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ACT    ols    2018 Q1 sample[1000]  714. [537.2034, 887.3422]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ACT    ols    2018 Q2 sample[1000]  814. [629.9566, 991.8888]80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 206 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 1 more variable: `95%` &lt;hilo&gt;</span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
